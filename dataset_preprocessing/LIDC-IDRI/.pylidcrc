@@ -1,0 +1,3 @@
+[dicom]
+path = "/mnt/hard/radiomics-features/LIDC-IDRI/dicom"
+warn = True
