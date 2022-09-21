@@ -27,3 +27,13 @@
 ```
 
 5. Create a table with paths:
+
+   ```bash
+      python preprocess.py
+   ```
+
+6. Extract features:
+
+   ```bash
+      python extract_features.py
+   ```

@@ -82,5 +82,7 @@ def merge_metadata(path_df, img_meta_df, seg_meta_df):
 if __name__ == "__main__":
     img_meta_df, seg_meta_df = load_metadata(config.base_dir)
     path_df = get_paths(config.base_dir)
+    img_meta_df.to_csv(config.base_dir / "image_df.csv", index=False)
+    path_df.to_csv(config.base_dir / "paths_raw_debug.csv", index=False)
     df = merge_metadata(path_df, img_meta_df, seg_meta_df)
     df.to_csv(config.base_dir / "paths.csv", index=False)
