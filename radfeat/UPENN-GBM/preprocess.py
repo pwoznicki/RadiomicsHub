@@ -22,7 +22,7 @@ sequence_map = {
 }
 
 def get_paths(ID, img_dirpath, seg_dirpath, sequence_name):
-    img_ID = f"{ID}_{sequence_name}"
+    series_ID = f"{ID}_{sequence_name}"
     img_path = img_dirpath / ID / f"{ID}_{sequence_name}.nii.gz"
     seg_path = seg_dirpath / f"{ID}_automated_approx_segm.nii.gz"
     if not img_path.exists():
@@ -33,7 +33,7 @@ def get_paths(ID, img_dirpath, seg_dirpath, sequence_name):
         raise FileNotFoundError(f"File not found: {seg_path}")
     return {
         "patient_ID": ID,
-        "img_ID": img_ID,
+        "series_ID": series_ID,
         "sequence": sequence_name,
         "img_path": str(img_path),
         "seg_path": str(seg_path),
