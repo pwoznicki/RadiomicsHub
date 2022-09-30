@@ -8,10 +8,10 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
-def get_paths(ID, raw_data_dirpath, sequence_name):
+def get_paths(ID, raw_data_dir, sequence_name):
     series_ID = f"{ID}_{sequence_name}"
-    img_path = raw_data_dirpath / ID / f"{ID}_{sequence_name}.nii.gz"
-    seg_path = raw_data_dirpath / f"{ID}_seg.nii.gz"
+    img_path = raw_data_dir / str(ID) / f"{ID}_{sequence_name}.nii.gz"
+    seg_path = raw_data_dir / str(ID) / f"{ID}_seg.nii.gz"
     if not img_path.exists():
         log.info(f"Image file not found: {img_path}")
         raise FileNotFoundError(f"File not found: {img_path}")
@@ -27,24 +27,22 @@ def get_paths(ID, raw_data_dirpath, sequence_name):
     }
 
 
-def get_IDs(seg_dir):
-    return [
-        f.name.removesuffix("_automated_approx_segm.nii.gz")
-        for f in seg_dir.glob("*_segm.nii.gz")
-    ]
+def get_IDs(table_dir):
+    df = pd.read_csv(table_dir / "train_labels.csv")
+    IDs = df["BraTS21ID"].values
+    IDs_str = [f"BraTS2021_{ID:05d}" for ID in IDs]
+    return IDs_str
 
 
 def create_ref_table():
     ref_data = []
-    seg_dirpath = config.base_dir / "automated_segm"
-    IDs = get_IDs(seg_dirpath)
+    IDs = get_IDs(config.table_dir)
+    data_dir = config.base_dir / "training_data"
+    sequences = ["t1", "t1ce", "t2", "flair"]
     for ID in IDs:
-        for sequence_name, dirname in sequence_map.items():
-            img_dirpath = config.base_dir / dirname
+        for sequence_name in sequences:
             try:
-                ref_data.append(
-                    get_paths(ID, img_dirpath, seg_dirpath, sequence_name)
-                )
+                ref_data.append(get_paths(ID, data_dir, sequence_name))
             except FileNotFoundError:
                 pass
     ref_table = pd.DataFrame(ref_data)
