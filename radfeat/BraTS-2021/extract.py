@@ -7,7 +7,7 @@ from autorad.feature_extraction.extractor import FeatureExtractor
 def extract_features(paths_df):
     image_dset = ImageDataset(
         paths_df,
-        ID_colname="img_ID",
+        ID_colname="series_ID",
         image_colname="img_path",
         mask_colname="seg_path",
     )
@@ -15,7 +15,7 @@ def extract_features(paths_df):
     for ROI in ROIs:
         extractor = FeatureExtractor(
             dataset=image_dset,
-            extraction_params=f"./extraction_params/{ROI}.yaml",
+            extraction_params=f"radfeat/BraTS-2021/extraction_params/{ROI}.yaml",
             n_jobs=12,
         )
         roi_feature_df = extractor.run()

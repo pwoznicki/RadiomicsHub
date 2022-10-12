@@ -7,6 +7,12 @@
    python preprocess.py
 ```
 
+3. Run feature extraction:
+
+```bash
+   python extract.py
+```
+
 ### Note
 
 - In TCIA there are automatic segmentations for >470 patients, and manual masks only for >200. Only the automatic masks are used here.

@@ -12,7 +12,7 @@ def extract_features(paths_df):
         mask_colname="seg_path",
     )
     extractor = FeatureExtractor(
-        image_dset, extraction_params="CT_default.yaml",
+        image_dset, extraction_params="CT_default.yaml", n_jobs=12,
     )
     feature_df = extractor.run()
     return feature_df

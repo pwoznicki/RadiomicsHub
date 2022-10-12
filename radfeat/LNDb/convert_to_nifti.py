@@ -1,23 +1,13 @@
-from pathlib import Path
-
-import SimpleITK as sitk
+import config
 from tqdm import tqdm
 
-import config
-
-
-def convert_sitk(in_path, out_path):
-    if not in_path.exists():
-        raise FileNotFoundError
-    data = sitk.ReadImage(in_path)
-    out_path.parent.mkdir(exist_ok=True)
-    sitk.WriteImage(data, out_path)
+from radfeat import utils
 
 
 def convert_dir(input_dir, output_dir):
     for img_path in tqdm(input_dir.glob("*.mhd")):
         out_img_path = output_dir / (img_path.name.split(".")[0] + ".nii.gz")
-        convert_sitk(img_path, out_img_path)
+        utils.convert_sitk(img_path, out_img_path)
 
 
 def convert_mhd_to_nifti(data_dir):
