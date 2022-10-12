@@ -18,9 +18,7 @@ def find_lung_nodule_id(fname):
     return match[0]
 
 
-def get_paths(data_dir) -> pd.DataFrame:
-    img_dir = data_dir / "nifti_img"
-    seg_dir = data_dir / "nifti_seg"
+def get_paths(img_dir, seg_dir) -> pd.DataFrame:
     image_paths = list(img_dir.glob("*.nii.gz"))
     seg_paths = list(seg_dir.glob("*.nii.gz"))
     ref = {
@@ -47,9 +45,8 @@ def get_paths(data_dir) -> pd.DataFrame:
     return df
 
 
-def load_metadata(data_dir):
-    metadata_path = data_dir / "metadata.csv"
-    df = pd.read_csv(metadata_path)
+def load_metadata(metadata_df_path):
+    df = pd.read_csv(metadata_df_path)
     df.rename(columns={"Subject ID": "patient_ID"}, inplace=True)
     img_df = df[df.Modality == "CT"][["Series UID", "Study UID", "patient_ID"]]
     img_df.rename({"Series UID": "Image Series UID"}, axis=1, inplace=True)
@@ -80,9 +77,10 @@ def merge_metadata(path_df, img_meta_df, seg_meta_df):
 
 
 if __name__ == "__main__":
-    img_meta_df, seg_meta_df = load_metadata(config.base_dir)
-    path_df = get_paths(config.base_dir)
-    img_meta_df.to_csv(config.base_dir / "image_df.csv", index=False)
-    path_df.to_csv(config.base_dir / "paths_raw_debug.csv", index=False)
+    path_df = get_paths(config.img_dir, config.seg_dir)
+    img_meta_df, seg_meta_df = load_metadata(config.metadata_path)
     df = merge_metadata(path_df, img_meta_df, seg_meta_df)
+
+    img_meta_df.to_csv(config.base_dir / "image_df.csv", index=False)
+    path_df.to_csv(config.base_dir / "paths_raw.csv", index=False)
     df.to_csv(config.base_dir / "paths.csv", index=False)
