@@ -14,7 +14,7 @@
 ```bash
    mkdir nifti_img
    cd dicom_img
-   ls -1 | xargs -L 1 dcm2niix -z y -f %i_%s -o ../nifti_img
+   ls -1 | xargs -L 1 dcm2niix -z y -f %i_%j -o ../nifti_img
 ```
 
 4. Convert DICOM segmentations to NIfTI:
