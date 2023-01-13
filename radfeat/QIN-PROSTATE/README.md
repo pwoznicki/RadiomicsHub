@@ -6,14 +6,24 @@
 2. Convert DICOM to NIFTI
 
 ```bash
-python convert.py <path to dicom_raw> <where to save nifties>
+python convert.py
 ```
 
-For example:
+3. Create table with paths to images and segmentations
 
 ```bash
-python convert.py dicom_raw nifties
+python create_table.py
 ```
+
+4. Extract features
+
+```bash
+python extract.py
+```
+
+## Notes
+
+For PCAMPMRI-00004 study 09-12-1994, the tumor segmentation is too small for the extraction with pyradiomics, for ADC and T2. Therefore features were not extracted for this ROI and sequences.
 
 ## Citation
 
