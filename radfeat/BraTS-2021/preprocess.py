@@ -1,10 +1,11 @@
 import logging
 from pathlib import Path
 
+from radfeat import master_config
 import config
 import pandas as pd
 
-logging.basicConfig(level=logging.INFO)
+master_config.configure_logging(config.log_dir)
 log = logging.getLogger(__name__)
 
 
@@ -20,8 +21,8 @@ def get_paths(ID, raw_data_dir, sequence_name):
         raise FileNotFoundError(f"File not found: {seg_path}")
     return {
         "patient_ID": ID,
-        "series_ID": series_ID,
         "sequence": sequence_name,
+        "series_ID": series_ID,
         "img_path": str(img_path),
         "seg_path": str(seg_path),
     }
@@ -34,10 +35,9 @@ def get_IDs(table_dir):
     return IDs_str
 
 
-def create_ref_table():
+def create_ref_table(data_dir):
     ref_data = []
     IDs = get_IDs(config.table_dir)
-    data_dir = config.base_dir / "training_data"
     sequences = ["t1", "t1ce", "t2", "flair"]
     for ID in IDs:
         for sequence_name in sequences:
@@ -50,5 +50,5 @@ def create_ref_table():
 
 
 if __name__ == "__main__":
-    ref_table = create_ref_table()
+    ref_table = create_ref_table(config.data_dir)
     ref_table.to_csv(config.table_dir / "paths.csv", index=False)
