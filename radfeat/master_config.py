@@ -1,14 +1,30 @@
 import logging
 import logging.config
 import sys
+from dataclasses import dataclass
 from pathlib import Path
-import os
 
 from rich.logging import RichHandler
 
 root_dir = Path("/mnt/volume_fra1_01/radiomics-features")
 
 log = logging.getLogger(__name__)
+
+
+@dataclass
+class Config:
+    base_dir: Path
+    raw_data_dir: Path
+
+    def __post_init__(self):
+        self.raw_table_dir = self.base_dir / "raw" / "tables"
+        self.log_dir = self.base_dir / "logs"
+        self.derived_table_dir = self.base_dir / "derived" / "tables"
+        self.derived_nifti_dir = self.base_dir / "derived" / "nifti"
+        self.raw_table_dir.mkdir(exist_ok=True, parents=True)
+        self.derived_table_dir.mkdir(exist_ok=True, parents=True)
+        self.derived_nifti_dir.mkdir(exist_ok=True)
+        self.log_dir.mkdir(exist_ok=True)
 
 
 def configure_logging(log_dir: Path):

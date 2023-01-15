@@ -1,12 +1,8 @@
 import logging
 from pathlib import Path
 
-import config
-import nibabel as nib
-import numpy as np
 import pandas as pd
 
-logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
@@ -47,14 +43,14 @@ def get_study_paths(study_dir: Path, timepoint: str) -> list[dict[str, str]]:
             if not seg_path.exists():
                 log.warning(f"File not found: {seg_path}")
                 continue
-            unique_ID = f"{patient_ID}_{sequence}_{roi}_{timepoint}"
+            series_ROI_ID = f"{patient_ID}_{sequence}_{roi}_{timepoint}"
             result.append(
                 {
                     "patient_ID": patient_ID,
                     "sequence": sequence,
                     "ROI": roi,
                     "test/retest": timepoint,
-                    "unique_ID": unique_ID,
+                    "series_ROI_ID": series_ROI_ID,
                     "img_path": str(img_path),
                     "seg_path": str(seg_path),
                 }
@@ -62,17 +58,11 @@ def get_study_paths(study_dir: Path, timepoint: str) -> list[dict[str, str]]:
     return result
 
 
-def create_ref_table():
-    nifti_dir = config.base_dir / "nifti"
+def create_ref_table(derived_nifti_dir: Path) -> pd.DataFrame:
     df = pd.DataFrame()
-    for patient_dir in nifti_dir.iterdir():
+    for patient_dir in derived_nifti_dir.iterdir():
         if patient_dir.is_dir():
             patient_df = get_paths(patient_dir)
             df = pd.concat([df, patient_df], axis=0)
     df.sort_values(by=["patient_ID", "sequence", "ROI"], inplace=True)
     return df
-
-
-if __name__ == "__main__":
-    ref_table = create_ref_table()
-    ref_table.to_csv(config.table_dir / "paths.csv", index=False)

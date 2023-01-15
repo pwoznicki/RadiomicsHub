@@ -3,12 +3,10 @@ import logging
 import subprocess
 from pathlib import Path
 
-import config
 import nibabel as nib
 import numpy as np
 from tqdm import tqdm
 
-logging.basicConfig(level=logging.WARN)
 log = logging.getLogger(__name__)
 
 
@@ -22,9 +20,14 @@ sequence_map = {
 
 
 def convert_dicom_to_nifti(input_dir: Path, output_dir: Path):
+    if not input_dir.exists():
+        raise FileNotFoundError(f"Directory not found: {input_dir}")
+    dicom_files = list(input_dir.rglob("*.dcm"))
+    if not dicom_files:
+        raise FileNotFoundError(f"No DICOM files found in {input_dir}")
     dicom_dirs = set(
         p.parent
-        for p in Path(input_dir).rglob("*.dcm")
+        for p in dicom_files
         if not "Measurement" in p.as_posix()  # ignore volume measurements
     )
     for dicom_dir in tqdm(dicom_dirs):
@@ -48,11 +51,12 @@ def convert_dicom_to_nifti(input_dir: Path, output_dir: Path):
                 "nifti",
             ]
         else:
-            continue
             cmd = [
                 "dcm2niix",
                 "-z",
                 "y",
+                "-w",
+                "0",
                 "-f",
                 sequence_save_name,
                 "-o",
@@ -119,8 +123,3 @@ def rename_segmentation(seg_path: Path):
     new_seg_path = seg_path.parent / f"{region}.nii.gz"
     seg_path.rename(new_seg_path)
     log.info(f"Renamed {seg_path} to {new_seg_path}")
-
-
-if __name__ == "__main__":
-    convert_dicom_to_nifti(config.raw_dir, config.nifti_dir)
-    postprocess_segmentations(config.nifti_dir)

@@ -1,24 +1,15 @@
 ## Repeatability of radiomics features in prostate mpMRI (QIN-PROSTATE)
 
 1. Download images and segmentations from [TCIA](https://wiki.cancerimagingarchive.net/display/Public/QIN+PROSTATE#18022465db2186bfb9d24789803d784c7a3c1041).
-   Rename the downloaded `QIN-PROSTATE-Repeatability` folder to `dicom_raw`
 
-2. Convert DICOM to NIFTI
+2. Rename the downloaded `QIN-PROSTATE-Repeatability` folder to `<your_base_dir>/raw/dicom`.
+   Set the `base_dir` variable in [config.py](radfeat/QIN_PROSTATE/config.py).
 
-```bash
-python convert.py
-```
-
-3. Create table with paths to images and segmentations
+3. Run the processing script
 
 ```bash
-python create_table.py
-```
-
-4. Extract features
-
-```bash
-python extract.py
+cd radiomics-features/radfeat/QIN_PROSTATE
+python .
 ```
 
 ## Notes
