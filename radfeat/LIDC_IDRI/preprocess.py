@@ -2,10 +2,9 @@ import logging
 import re
 from pathlib import Path
 
+import config
 import pandas as pd
 from tqdm import tqdm
-
-import config
 
 log = logging.getLogger(__name__)
 

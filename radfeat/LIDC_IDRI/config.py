@@ -1,6 +1,13 @@
-from master_config import root_dir
+from pathlib import Path
 
-base_dir = root_dir / "LIDC-IDRI"
-img_dir = base_dir / "nifti_img"
-seg_dir = base_dir / "nifti_seg"
-metadata_path = base_dir / "metadata.csv"
+from radfeat import master_config
+
+base_dir = Path("/mnt/hard/radiomics-features/LIDC-IDRI")
+raw_data_dir = base_dir / "raw" / "dicom"
+
+config = master_config.Config(
+    base_dir=base_dir,
+    raw_data_dir=raw_data_dir,
+)
+
+metadata_path = config.raw_table_dir / "metadata.csv"
