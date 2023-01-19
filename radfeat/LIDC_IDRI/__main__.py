@@ -25,7 +25,7 @@ def run_pipeline():
         config.derived_nifti_dir / "seg",
     )
 
-    text = " Creating reference table (2/4) "
+    text = " Creating reference tables (2/4) "
     log.info(f"{text:#^80}")
 
     raw_metadata_df = pd.read_csv(config.raw_table_dir / "metadata.csv")
@@ -34,12 +34,18 @@ def run_pipeline():
         seg_dir=config.derived_nifti_dir / "seg",
         raw_metadata_df=raw_metadata_df,
     )
+    path_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
+
+    label_df = pd.read_excel(
+        config.raw_table_dir / "tcia-diagnosis-data-2012-04-20.xls"
+    )
+    label_df[label_df.columns[:8]].to_csv(
+        config.derived_table_dir / "labels.csv", index=False
+    )
 
     text = " Resampling masks to match images (3/4) "
     log.info(f"{text:#^80}")
     preprocess.resample_masks_to_match_images(path_df)
-
-    path_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
 
     text = " Extracting features (4/4)"
     log.info(f"{text:#^80}")

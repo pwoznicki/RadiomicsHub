@@ -6,7 +6,6 @@ from autorad.utils import spatial
 
 import pandas as pd
 from tqdm import tqdm
-from pqdm.threads import pqdm
 
 log = logging.getLogger(__name__)
 

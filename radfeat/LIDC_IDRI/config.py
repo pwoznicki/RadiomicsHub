@@ -9,5 +9,3 @@ config = master_config.Config(
     base_dir=base_dir,
     raw_data_dir=raw_data_dir,
 )
-
-metadata_path = config.raw_table_dir / "metadata.csv"
