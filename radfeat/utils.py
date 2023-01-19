@@ -7,14 +7,17 @@ from autorad.feature_extraction.extractor import FeatureExtractor
 logging.getLogger().setLevel(logging.CRITICAL)
 
 
-def extract_features(paths_df):
+def extract_features(paths_df, ID_colname, n_jobs=-1):
     image_dset = ImageDataset(
         paths_df,
-        ID_colname="seg_ID",
+        ID_colname=ID_colname,
+        image_colname="img_path",
         mask_colname="seg_path",
     )
     extractor = FeatureExtractor(
-        image_dset, extraction_params="CT_default.yaml"
+        image_dset,
+        extraction_params="CT_default.yaml",
+        n_jobs=n_jobs,
     )
     feature_df = extractor.run()
     return feature_df
