@@ -1,7 +1,5 @@
 ## LIDC-IDRI dataset
 
-## Requirements
-
 ## Steps
 
 1. Download dataset (`data0-data5.rar] from https://zenodo.org/record/6613714#.Y8rTA9LMJkh \\
@@ -19,6 +17,15 @@ Unpack them to a folder `<your_base_dir>/raw/mhd/img`.
    cd radiomics-features/radfeat/
    python .
 ```
+
+### Labels
+
+Fleischner scores are used as labels. They are converted to numerical values as follows:
+
+- 0: No routine follow-up required or optional CT at 12 months according to patient risk
+- 1: CT at 6-12 months required
+- 2: CT at 3-6 months required
+- 3: CT, PET/CT or tissue sampling at 3 months required
 
 ## Notes
 

@@ -1,4 +1,5 @@
 import logging
+import shutil
 
 import pandas as pd
 
@@ -43,11 +44,17 @@ def run_pipeline():
         expanded_ref_df=ref_df_expanded,
     )
 
-    text = " Creating reference table (4/5) "
+    text = " Creating reference tables (4/5) "
     log.info(f"{text:#^80}")
 
     paths_df = preprocess.create_path_df(derived_img_dir, derived_seg_dir)
     paths_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
+    paths_df = pd.read_csv(config.derived_table_dir / "paths.csv")
+
+    shutil.copy(
+        config.raw_table_dir / "trainFleischner.csv",
+        config.derived_table_dir / "labels.csv",
+    )
 
     text = " Extracting features (5/5)"
     log.info(f"{text:#^80}")

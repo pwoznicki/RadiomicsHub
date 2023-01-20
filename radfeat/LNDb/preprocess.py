@@ -38,8 +38,3 @@ def create_path_df(img_dir, seg_dir):
     )
     path_df.sort_values(by=["patient_ID", "seg_ID"], inplace=True)
     return path_df
-
-
-def separate_findings_dataset(seg_dir, output_dir, ref_df_expanded):
-    for mask_path in tqdm(list(seg_dir.glob("*.nii.gz"))):
-        separate_findings(mask_path, output_dir, ref_df_expanded)
