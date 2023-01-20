@@ -7,7 +7,9 @@ from autorad.feature_extraction.extractor import FeatureExtractor
 logging.getLogger().setLevel(logging.CRITICAL)
 
 
-def extract_features(paths_df, ID_colname, n_jobs=-1):
+def extract_features(
+    paths_df, ID_colname, extraction_params="CT_default.yaml", n_jobs=-1
+):
     image_dset = ImageDataset(
         paths_df,
         ID_colname=ID_colname,
@@ -16,7 +18,7 @@ def extract_features(paths_df, ID_colname, n_jobs=-1):
     )
     extractor = FeatureExtractor(
         image_dset,
-        extraction_params="CT_default.yaml",
+        extraction_params=extraction_params,
         n_jobs=n_jobs,
     )
     feature_df = extractor.run()
@@ -29,3 +31,13 @@ def convert_sitk(in_path, out_path):
     data = sitk.ReadImage(in_path)
     out_path.parent.mkdir(exist_ok=True)
     sitk.WriteImage(data, out_path)
+
+
+def sitk_array_to_image(arr, ref_img):
+    """
+    Convert a NumPy array to a SimpleITK image, using the reference image's
+    metadata.
+    """
+    img = sitk.GetImageFromArray(arr)
+    img.CopyInformation(ref_img)
+    return img
