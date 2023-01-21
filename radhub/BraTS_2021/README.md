@@ -19,12 +19,12 @@
     └── train_labels.csv
 ```
 
-Update `base_dir` in [config.py](radfeat/BraTS-2021/config.py).
+Update `base_dir` in [config.py](radhub/BraTS-2021/config.py).
 
 3. Run processing script:
 
 ```bash
-   cd radiomics-features/radfeat/BraTS_2021
+   cd radiomics-features/radhub/BraTS_2021
    python .
 ```
 

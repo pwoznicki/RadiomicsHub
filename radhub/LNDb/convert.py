@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 import SimpleITK as sitk
 
-from radfeat import utils
+from radhub import utils
 import numpy as np
 
 

@@ -21,7 +21,7 @@
 5. Run the preprocessing and feature extraction:
 
 ```bash
-   cd radiomics-features/radfeat/LIDC_IDRI
+   cd radiomics-features/radhub/LIDC_IDRI
    python .
 ```
 

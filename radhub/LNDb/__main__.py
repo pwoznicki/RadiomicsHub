@@ -3,9 +3,9 @@ import shutil
 
 import pandas as pd
 
-from radfeat import master_config, utils
-from radfeat.LNDb.config import config
-from radfeat.LNDb import convert, preprocess
+from radhub import master_config, utils
+from radhub.LNDb.config import config
+from radhub.LNDb import convert, preprocess
 
 log = logging.getLogger(__name__)
 

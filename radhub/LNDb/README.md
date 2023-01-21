@@ -14,7 +14,7 @@ Unpack them to a folder `<your_base_dir>/raw/mhd/img`.
 5. Run the preprocessing and feature extraction:
 
 ```bash
-   cd radiomics-features/radfeat/
+   cd radiomics-features/radhub/
    python .
 ```
 

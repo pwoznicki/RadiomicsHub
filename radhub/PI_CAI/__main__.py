@@ -2,8 +2,8 @@ import logging
 
 import pandas as pd
 
-from radfeat import master_config, utils, validate
-from radfeat.PI_CAI import config, preprocess
+from radhub import master_config, utils, validate
+from radhub.PI_CAI import config, preprocess
 
 from autorad.utils import testing
 

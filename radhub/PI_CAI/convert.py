@@ -1,6 +1,6 @@
 from tqdm import tqdm
 
-from radfeat import utils
+from radhub import utils
 
 
 def convert_images(input_dir, output_dir):

@@ -1,8 +1,8 @@
 import logging
 
-from radfeat import master_config
-from radfeat.QIN_PROSTATE import convert, create_table, extract
-from radfeat.QIN_PROSTATE.config import config
+from radhub import master_config
+from radhub.QIN_PROSTATE import convert, create_table, extract
+from radhub.QIN_PROSTATE.config import config
 
 log = logging.getLogger(__name__)
 

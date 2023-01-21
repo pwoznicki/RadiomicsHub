@@ -2,9 +2,9 @@ import logging
 
 import pandas as pd
 
-from radfeat import master_config, utils
-from radfeat.LIDC_IDRI import convert, preprocess
-from radfeat.LIDC_IDRI.config import config
+from radhub import master_config, utils
+from radhub.LIDC_IDRI import convert, preprocess
+from radhub.LIDC_IDRI.config import config
 
 log = logging.getLogger(__name__)
 

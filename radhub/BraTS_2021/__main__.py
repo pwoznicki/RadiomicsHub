@@ -2,9 +2,9 @@ import logging
 
 import pandas as pd
 
-from radfeat import master_config
-from radfeat.BraTS_2021 import extract, preprocess
-from radfeat.BraTS_2021.config import config
+from radhub import master_config
+from radhub.BraTS_2021 import extract, preprocess
+from radhub.BraTS_2021.config import config
 
 log = logging.getLogger(__name__)
 

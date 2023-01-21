@@ -1,6 +1,6 @@
 ### Overall survival for Glioblastoma
 
-1. Download all the _Nifti files_ from [TCIA UPENN-GBM](https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=70225642#70225642c94d520b7b5f42e7925602d723412459). Put them in one folder and update [config.py](radfeat/LNDb/config.py).
+1. Download all the _Nifti files_ from [TCIA UPENN-GBM](https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=70225642#70225642c94d520b7b5f42e7925602d723412459). Put them in one folder and update [config.py](radhub/LNDb/config.py).
 2. Run preprocessing:
 
 ```bash

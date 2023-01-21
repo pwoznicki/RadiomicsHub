@@ -3,12 +3,12 @@
 1. Download images and segmentations from [TCIA](https://wiki.cancerimagingarchive.net/display/Public/QIN+PROSTATE#18022465db2186bfb9d24789803d784c7a3c1041).
 
 2. Rename the downloaded `QIN-PROSTATE-Repeatability` folder to `<your_base_dir>/raw/dicom`.
-   Set the `base_dir` variable in [config.py](radfeat/QIN_PROSTATE/config.py).
+   Set the `base_dir` variable in [config.py](radhub/QIN_PROSTATE/config.py).
 
 3. Run the processing script
 
 ```bash
-cd radiomics-features/radfeat/QIN_PROSTATE
+cd radiomics-features/radhub/QIN_PROSTATE
 python .
 ```
 

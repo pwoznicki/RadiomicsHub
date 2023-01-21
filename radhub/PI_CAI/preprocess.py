@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 
-from radfeat.PI_CAI import config
+from radhub.PI_CAI import config
 
 log = logging.getLogger(__name__)
 

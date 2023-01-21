@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from radfeat import master_config
+from radhub import master_config
 
 log = logging.getLogger(__name__)
 
