@@ -1,23 +1,32 @@
 from pathlib import Path
 
-from radfeat import master_config
-
 base_dir = Path("/mnt/hard/radiomics-features/PI-CAI")
+raw_data_dir = base_dir / "raw"
 
-config = master_config.Config(
-    base_dir=base_dir,
-    raw_data_dir=base_dir / "raw",
-)
+derived_table_dir = base_dir / "derived" / "tables"
+derived_table_dir.mkdir(parents=True, exist_ok=True)
 
-raw_lesion_seg_dir = (
-    config.raw_data_dir
+log_dir = base_dir / "logs"
+
+
+lesion_AI_seg_dir = (
+    raw_data_dir
     / "picai_labels"
     / "csPCa_lesion_delineations"
     / "AI"
     / "Bosma22a"
 )
-prostate_mask_dir = (
-    config.raw_data_dir
+
+lesion_human_seg_dir = (
+    raw_data_dir
+    / "picai_labels"
+    / "csPCa_lesion_delineations"
+    / "human_expert"
+    / "resampled"
+)
+
+prostate_seg_dir = (
+    raw_data_dir
     / "picai_labels"
     / "anatomical_delineations"
     / "whole_gland"
@@ -26,5 +35,5 @@ prostate_mask_dir = (
 )
 
 label_table_path = (
-    base_dir / "picai_labels" / "clinical_information" / "marksheet.csv"
+    raw_data_dir / "picai_labels" / "clinical_information" / "marksheet.csv"
 )

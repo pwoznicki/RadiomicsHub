@@ -29,7 +29,7 @@ def convert_sitk(in_path, out_path):
     if not in_path.exists():
         raise FileNotFoundError
     data = sitk.ReadImage(in_path)
-    out_path.parent.mkdir(exist_ok=True)
+    out_path.parent.mkdir(exist_ok=True, parents=True)
     sitk.WriteImage(data, out_path)
 
 

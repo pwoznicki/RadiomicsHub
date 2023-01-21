@@ -13,8 +13,13 @@ def run_tests(path_df):
         testing.assert_equal_shape,
         testing.assert_has_nonzero_within_roi,
     ]
+    mask_assertions = [
+        testing.assert_has_n_labels,
+    ]
     for assert_fn in single_assertions:
         testing.check_assertion_dataset(assert_fn, img_paths)
         testing.check_assertion_dataset(assert_fn, seg_paths)
     for assert_fn in img_mask_assertions:
         testing.check_assertion_dataset(assert_fn, (img_paths, seg_paths))
+    for assert_fn in mask_assertions:
+        testing.check_assertion_dataset(assert_fn, seg_paths)
