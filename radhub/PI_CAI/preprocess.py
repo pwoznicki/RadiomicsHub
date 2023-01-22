@@ -6,29 +6,12 @@ from radhub.PI_CAI import config
 log = logging.getLogger(__name__)
 
 sequences = ["t2w", "adc", "hbv"]
-rois = [
-    {
-        "name": "prostate",
-        "seg_dir": config.prostate_seg_dir,
-        "annotator": "AI",
-    },
-    {
-        "name": "lesion",
-        "seg_dir": config.lesion_AI_seg_dir,
-        "annotator": "AI",
-    },
-    {
-        "name": "lesion",
-        "seg_dir": config.lesion_human_seg_dir,
-        "annotator": "human",
-    },
-]
 
 
 def get_paths(label_df):
     paths = []
     for patient_ID, study_ID in label_df[["patient_id", "study_id"]].values:
-        for roi in rois:
+        for roi in config.rois:
             for sequence in sequences:
                 img_path = (
                     config.raw_data_dir
@@ -36,7 +19,9 @@ def get_paths(label_df):
                     / str(patient_ID)
                     / f"{patient_ID}_{study_ID}_{sequence}.mha"
                 )
-                seg_path = roi["seg_dir"] / f"{patient_ID}_{study_ID}.nii.gz"
+                seg_path = (
+                    roi["derived_seg_dir"] / f"{patient_ID}_{study_ID}.nii.gz"
+                )
                 if not img_path.exists():
                     log.error(f"Image file not found: {img_path}")
                 if not seg_path.exists():
