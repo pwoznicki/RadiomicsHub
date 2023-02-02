@@ -28,6 +28,8 @@ class Config:
 
 
 def configure_logging(log_dir: Path):
+    if not log_dir.exists():
+        log_dir.mkdir(exist_ok=True, parents=True)
     logging_config = {
         "version": 1,
         "disable_existing_loggers": False,
