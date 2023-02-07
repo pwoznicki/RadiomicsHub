@@ -15,6 +15,8 @@ log = logging.getLogger(__name__)
 class Config:
     base_dir: Path
     raw_data_dir: Path
+    raw_img_dir: Path | None = None
+    raw_seg_dir: Path | None = None
 
     def __post_init__(self):
         self.raw_table_dir = self.base_dir / "raw" / "tables"

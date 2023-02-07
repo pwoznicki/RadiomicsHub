@@ -1,15 +1,17 @@
 import logging
+import subprocess
 from pathlib import Path
-from tqdm import tqdm
-from pqdm.threads import pqdm
 
 import SimpleITK as sitk
 from autorad.data.dataset import ImageDataset
 from autorad.feature_extraction.extractor import FeatureExtractor
 from fire import Fire
-import subprocess
+from pqdm.threads import pqdm
+from tqdm import tqdm
 
 logging.getLogger().setLevel(logging.CRITICAL)
+
+log = logging.getLogger(__name__)
 
 
 def convert_dicom_img_to_nifti(
