@@ -14,8 +14,23 @@ logging.getLogger().setLevel(logging.CRITICAL)
 log = logging.getLogger(__name__)
 
 
-def convert_dicom_img_to_nifti(
-    dicom_img_dir, nifti_img_dir, filename_pattern="%i"
+def read_dicom_sitk(input_dir: Path) -> sitk.Image:
+    reader = sitk.ImageSeriesReader()
+
+    dicom_names = reader.GetGDCMSeriesFileNames(str(input_dir))
+    reader.SetFileNames(dicom_names)
+
+    image = reader.Execute()
+
+    return image
+
+
+def convert_dicom_to_nifti(
+    dicom_img_dir,
+    nifti_img_dir,
+    filename_pattern="%i",
+    *dcm2niix_args,
+    ignore_derived=True,
 ):
     if not dicom_img_dir.exists():
         raise FileNotFoundError(f"Directory not found: {dicom_img_dir}")
@@ -24,6 +39,8 @@ def convert_dicom_img_to_nifti(
     dicom_img_dirs = (
         child for child in dicom_img_dir.iterdir() if child.is_dir()
     )
+    if ignore_derived:
+        dcm2niix_args = list(dcm2niix_args) + ["-i", "y"]
     img_cmds = (
         [
             "dcm2niix",
@@ -33,21 +50,56 @@ def convert_dicom_img_to_nifti(
             filename_pattern,
             "-o",
             nifti_img_dir.as_posix(),
-            "-i",
-            "y",
+            *dcm2niix_args,
             dicom_dir.as_posix(),
         ]
         for dicom_dir in dicom_img_dirs
     )
-    pqdm(img_cmds, convert_series, n_jobs=16)
+    pqdm(img_cmds, convert_series, n_jobs=1)
+
+
+def convert_dicom_to_nifti_imported(
+    dicom_dir: Path, output_path: Path, converter: str = "dcm2niix"
+):
+    """
+    Convert directory containing one dicom series into compressed nifti
+    Args:
+        dicom_dir (Path): Path to the dicom directory
+        output_path (Path): Path to the output nifti file
+        converter (str): Converter to use. Either "plastimatch" or "dcm2niix"
+    """
+    dicom_dir = Path(dicom_dir)
+    output_path = Path(output_path)
+    if converter == "plastimatch":
+        cmd = (
+            f"plastimatch convert --input {dicom_dir.absolute()} "
+            f"--output-img {output_path.absolute()}"
+        )
+    elif converter == "dcm2niix":
+        do_compression = "y" if output_path.name.endswith(".nii.gz") else "n"
+        cmd = (
+            f"dcm2niix -z {do_compression} -f {output_path.name.split('.')[0]} -o"
+            f" {output_path.parent.absolute()} -i y {dicom_dir.absolute()}"
+        )
+    else:
+        raise ValueError(f"Converter {converter} not found!")
+
+    log.info(f"Converting {dicom_dir} to {output_path} with {converter}")
+    log.info(f"Command: {cmd}")
+
+    try:
+        output = subprocess.check_output(cmd.split())
+    except RuntimeError:
+        log.error(f"Conversion to nifti with dcm2niix failed for {dicom_dir}")
 
 
 def convert_series(cmd: list[str]):
     try:
         subprocess.check_output(cmd)
         log.info(f"Conversion successful! (command: {cmd}")
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
         log.error(f"Conversion failed! (command: {cmd}")
+        log.error(f"Error: {e.output}")
 
 
 def convert_dir_sitk(
@@ -69,6 +121,7 @@ def extract_features(
     extraction_params="CT_default.yaml",
     image_colname="img_path",
     mask_colname="seg_path",
+    root_dir=None,
     n_jobs=-1,
 ):
     image_dset = ImageDataset(
@@ -76,6 +129,7 @@ def extract_features(
         ID_colname=ID_colname,
         image_colname=image_colname,
         mask_colname=mask_colname,
+        root_dir=root_dir,
     )
     extractor = FeatureExtractor(
         image_dset,

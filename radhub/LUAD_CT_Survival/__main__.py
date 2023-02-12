@@ -15,16 +15,16 @@ def run_pipeline():
 
     text = " Converting DICOM images to Nifti (1/4) "
     log.info(f"{text:#^80}")
-    # utils.convert_dicom_img_to_nifti(
-    #     dicom_img_dir=config.raw_img_dir,
-    #     nifti_img_dir=config.derived_nifti_dir / "img",
-    # )
+    utils.convert_dicom_img_to_nifti(
+        dicom_img_dir=config.raw_img_dir,
+        nifti_img_dir=config.derived_nifti_dir / "img",
+    )
 
-    # text = " Cleaning Nifti segmentations (2/4) "
-    # log.info(f"{text:#^80}")
-    # preprocess.cleanse_segmentations(
-    #     config.raw_seg_dir, config.derived_nifti_dir / "seg"
-    # )
+    text = " Cleaning Nifti segmentations (2/4) "
+    log.info(f"{text:#^80}")
+    preprocess.cleanse_segmentations(
+        config.raw_seg_dir, config.derived_nifti_dir / "seg"
+    )
 
     text = " Creating a table with paths (3/4) "
     log.info(f"{text:#^80}")
