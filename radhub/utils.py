@@ -31,6 +31,7 @@ def convert_dicom_to_nifti(
     filename_pattern="%i",
     *dcm2niix_args,
     ignore_derived=True,
+    n_jobs=-1,
 ):
     if not dicom_img_dir.exists():
         raise FileNotFoundError(f"Directory not found: {dicom_img_dir}")
@@ -55,7 +56,7 @@ def convert_dicom_to_nifti(
         ]
         for dicom_dir in dicom_img_dirs
     )
-    pqdm(img_cmds, convert_series, n_jobs=1)
+    pqdm(img_cmds, convert_series, n_jobs=n_jobs)
 
 
 def convert_dicom_to_nifti_imported(

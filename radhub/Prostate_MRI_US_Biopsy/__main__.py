@@ -14,28 +14,19 @@ def run_pipeline():
 
     master_config.configure_logging(config.log_dir)
 
-    # text = " Converting DICOM images and segmentations to Nifti (1/4) "
-    # log.info(f"{text:#^80}")
+    text = " Converting DICOM images to Nifti (1/3) "
+    log.info(f"{text:#^80}")
 
-    # dicom_paths = convert.find_relevant_MRI_series(
-    #     config.raw_data_dir / "dicom"
-    # )
-    # convert.convert_dicom_img_to_nifti(
-    #     dicom_paths,
-    #     config.derived_nifti_dir / "img",
-    #     filename_pattern="%i\/%j",
-    # )
+    dicom_paths = convert.find_relevant_MRI_series(
+        config.raw_data_dir / "dicom"
+    )
+    convert.convert_dicom_img_to_nifti(
+        dicom_paths,
+        config.derived_nifti_dir / "img",
+        filename_pattern="%i\/%j",
+    )
 
-    # text = " Converting STL segmentations to Nifti (2/4) "
-    # log.info(f"{text:#^80}")
-
-    # convert.convert_segmentations(
-    #     stl_dir=config.raw_data_dir / "stl",
-    #     img_dir=config.derived_nifti_dir / "img",
-    #     out_dir=config.derived_nifti_dir / "seg",
-    # )
-
-    text = " Creating table with paths (3/4) "
+    text = " Creating table with paths (2/3) "
     log.info(f"{text:#^80}")
 
     biopsy_df = pd.read_excel(str(config.raw_table_dir / "biopsy.xlsx"))
@@ -47,7 +38,7 @@ def run_pipeline():
     path_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
     label_df.to_csv(config.derived_table_dir / "labels.csv", index=False)
 
-    text = " Extracting features (4/4) "
+    text = " Extracting features (3/3) "
     log.info(f"{text:#^80}")
 
     for ROI in ["lesion", "prostate"]:

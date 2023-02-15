@@ -18,17 +18,18 @@
 
 4. Edit the base_path in [config.py](config.py)
 
-5. Run the preprocessing and feature extraction:
+5. Convert segmentations from STL into nifti. For that, run a docker container with 3D Slicer Notebook environment from this directory. In there, run the notebook `stl_to_nifti.ipynb` (set the paths accordingly) with *Slicer* kernel.
+```bash
+docker run -p 8888:8888 -p 49053:49053 -v /mnt/hard/radiomics-features/Prostate-MRI-US-Biopsy/raw/stl:/stl -v /mnt/hard/radiomics-features/Prostate-MRI-US-Biopsy/derived/nifti:/nifti -v "$PWD":/home/sliceruser --rm -ti lassoan/slicer-notebook:latest
+
+```
+5. Convert DICOM images to nifti, run preprocessing and feature extraction:
 
 ```bash
    cd radiomics-features/radhub/
    python .
 ```
 
-Convert segmentations from STL into nifti. For that, start docker container with 3DSlicer Notebook environment and run the notebook `convert_segmentations.ipynb`.
-```bash
-docker run -p 8888:8888 -p 49053:49053 -v /mnt/hard/radiomics-features/Prostate-MRI-US-Biopsy/raw/stl:/stl -v /mnt/hard/radiomics-features/Prostate-MRI-US-Biopsy/derived/nifti:/nifti -v "$PWD":/home/sliceruser --rm -ti lassoan/slicer-notebook:latest
-```
 
 
 ## Notes
