@@ -7,6 +7,8 @@ import nibabel as nib
 import numpy as np
 from tqdm import tqdm
 
+from radhub import utils
+
 log = logging.getLogger(__name__)
 
 
@@ -70,18 +72,10 @@ def convert_dicom_to_nifti(input_dir: Path, output_dir: Path):
             log.error(f"Conversion failed! (command: {(' ').join(cmd)}")
 
 
-def binarize_segmentation(nifti_path: Path):
-    img = nib.load(nifti_path)
-    arr = img.get_fdata()
-    arr = (arr > 0).astype(np.uint8)
-    new_img = nib.Nifti1Image(arr, img.affine, img.header)
-    nib.save(new_img, nifti_path)
-
-
 def postprocess_segmentations(nifti_dir: Path):
     seg_paths = list(Path(nifti_dir).glob("**/segmentation/*.nii.gz"))
     for seg_path in seg_paths:
-        binarize_segmentation(seg_path)
+        utils.binarize_segmentation(seg_path)
         rename_segmentation(seg_path)
 
 

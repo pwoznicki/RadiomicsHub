@@ -1,17 +1,18 @@
 from radhub import master_config
+from pathlib import Path
 
 
-base_dir = master_config.root_dir / "RIDER-LungCT"
+base_dir = Path("/mnt/hard/radiomics-features/RIDER-LungCT")
 
-dicom_img_dir = base_dir / "dicom_img"
-dicom_seg_dir = base_dir / "dicom_seg"
+raw_data_dir = base_dir / "raw" / "dicom"
 
-nifti_img_dir = base_dir / "nifti_img"
-nifti_seg_dir = base_dir / "nifti_seg"
+config = master_config.Config(
+    base_dir=base_dir,
+    raw_data_dir=raw_data_dir,
+)
 
-
-excluded = [
-    "RIDER-2283289298"  # only 1 timepoint
-    "RIDER-5195703382"  # only 1 timepoint
-    "RIDER-8509201188"  # only 1 timepoint
+excluded_ids = [
+    "RIDER-2283289298",  # only 1 timepoint
+    "RIDER-5195703382",  # only 1 timepoint
+    "RIDER-8509201188",  # only 1 timepoint
 ]

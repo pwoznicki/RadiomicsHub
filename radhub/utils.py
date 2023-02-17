@@ -1,4 +1,5 @@
 import logging
+from typing import Sequence
 import subprocess
 from pathlib import Path
 
@@ -8,10 +9,20 @@ from autorad.feature_extraction.extractor import FeatureExtractor
 from fire import Fire
 from pqdm.threads import pqdm
 from tqdm import tqdm
+import nibabel as nib
+import numpy as np
 
 logging.getLogger().setLevel(logging.CRITICAL)
 
 log = logging.getLogger(__name__)
+
+
+def binarize_segmentation(nifti_path: Path):
+    img = nib.load(nifti_path)
+    arr = img.get_fdata()
+    arr = (arr > 0).astype(np.uint8)
+    new_img = nib.Nifti1Image(arr, img.affine, img.header)
+    nib.save(new_img, nifti_path)
 
 
 def read_dicom_sitk(input_dir: Path) -> sitk.Image:
@@ -26,20 +37,22 @@ def read_dicom_sitk(input_dir: Path) -> sitk.Image:
 
 
 def convert_dicom_to_nifti(
-    dicom_img_dir,
+    dicom_data: Path | Sequence[Path],
     nifti_img_dir,
     filename_pattern="%i",
     *dcm2niix_args,
     ignore_derived=True,
-    n_jobs=-1,
+    n_jobs=4,
 ):
-    if not dicom_img_dir.exists():
-        raise FileNotFoundError(f"Directory not found: {dicom_img_dir}")
+    if isinstance(dicom_data, Path):
+        if not dicom_img_dir.exists():
+            raise FileNotFoundError(f"Directory not found: {dicom_img_dir}")
+        dicom_img_dirs = (
+            child for child in dicom_img_dir.iterdir() if child.is_dir()
+        )
+    else:
+        dicom_img_dirs = dicom_data
     nifti_img_dir.mkdir(parents=True, exist_ok=True)
-
-    dicom_img_dirs = (
-        child for child in dicom_img_dir.iterdir() if child.is_dir()
-    )
     if ignore_derived:
         dcm2niix_args = list(dcm2niix_args) + ["-i", "y"]
     img_cmds = (
