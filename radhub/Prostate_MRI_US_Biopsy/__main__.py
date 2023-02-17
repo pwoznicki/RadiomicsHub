@@ -14,8 +14,7 @@ def run_pipeline():
 
     master_config.configure_logging(config.log_dir)
 
-    text = " Converting DICOM images to Nifti (1/3) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Converting DICOM images to Nifti (1/3)")
 
     dicom_paths = convert.find_relevant_MRI_series(
         config.raw_data_dir / "dicom"
@@ -26,8 +25,7 @@ def run_pipeline():
         filename_pattern="%i\/%j",
     )
 
-    text = " Creating table with paths (2/3) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Creating table with paths (2/3)")
 
     biopsy_df = pd.read_excel(str(config.raw_table_dir / "biopsy.xlsx"))
     path_df, label_df = preprocess.create_path_df(
@@ -38,8 +36,7 @@ def run_pipeline():
     path_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
     label_df.to_csv(config.derived_table_dir / "labels.csv", index=False)
 
-    text = " Extracting features (3/3) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Extracting features (3/3)")
 
     for ROI in ["lesion", "prostate"]:
         feature_df = utils.extract_features(

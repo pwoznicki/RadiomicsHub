@@ -13,16 +13,14 @@ def run_pipeline():
 
     master_config.configure_logging(config.log_dir)
 
-    text = " Converting DICOM and DICOM RT files to Nifti (1/3) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Converting DICOM and DICOM RT files to Nifti (1/3)")
 
     preprocess.convert_rtstruct_dataset(
         dicom_dir=config.raw_data_dir,
         output_dir=config.derived_nifti_dir,
     )
 
-    text = " Creating a table with paths (2/3) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Creating a table with paths (2/3)")
 
     paths_df = preprocess.create_paths_df(
         config.derived_nifti_dir, config.base_dir
@@ -36,8 +34,7 @@ def run_pipeline():
         config.derived_table_dir / "labels.csv", index=False
     )
 
-    text = " Extracting features (3/3)"
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Extracting features (3/3)")
 
     feature_df = utils.extract_features(
         paths_df=paths_df,

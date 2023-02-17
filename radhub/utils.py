@@ -17,6 +17,20 @@ logging.getLogger().setLevel(logging.CRITICAL)
 log = logging.getLogger(__name__)
 
 
+def pretty_log(text):
+    text = f" {text} "
+    log.info(f"{text:#^80}")
+
+
+def binarize_segmentations(nifti_data: Path | Sequence[Path], n_jobs=4):
+    if isinstance(nifti_data, Path):
+        seg_paths = list(nifti_seg_dir.rglob("*.nii.gz"))
+    else:
+        seg_paths = nifti_data
+    for seg_path in tqdm(seg_paths):
+        binarize_segmentation(seg_path)
+
+
 def binarize_segmentation(nifti_path: Path):
     img = nib.load(nifti_path)
     arr = img.get_fdata()
@@ -45,10 +59,10 @@ def convert_dicom_to_nifti(
     n_jobs=4,
 ):
     if isinstance(dicom_data, Path):
-        if not dicom_img_dir.exists():
-            raise FileNotFoundError(f"Directory not found: {dicom_img_dir}")
+        if not dicom_data.exists():
+            raise FileNotFoundError(f"Directory not found: {dicom_data}")
         dicom_img_dirs = (
-            child for child in dicom_img_dir.iterdir() if child.is_dir()
+            child for child in dicom_data.iterdir() if child.is_dir()
         )
     else:
         dicom_img_dirs = dicom_data

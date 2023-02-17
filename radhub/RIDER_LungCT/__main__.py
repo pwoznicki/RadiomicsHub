@@ -14,8 +14,7 @@ def run_pipeline():
 
     master_config.configure_logging(config.log_dir)
 
-    text = " Converting and renaming DICOM images to Nifti (1/4) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Converting and renaming DICOM images to Nifti (1/4)")
 
     convert.convert_img_to_nifti(
         config.raw_data_dir / "img",
@@ -27,26 +26,25 @@ def run_pipeline():
         dicom_img_dir=config.raw_data_dir / "img",
     )
 
-    text = " Converting and postprocessing DICOM segmentations to Nifti (2/4) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log(
+        "Converting and postprocessing DICOM segmentations to Nifti (2/4)"
+    )
 
     convert.convert_seg_to_nifti(
         config.raw_data_dir / "seg",
         config.derived_nifti_dir / "seg",
         excluded_ids=excluded_ids,
     )
-    convert.postprocess_segmentations(config.derived_nifti_dir / "seg")
+    utils.binarize_segmentations(config.derived_nifti_dir / "seg")
 
-    text = " Creating a table with paths (3/4)"
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Creating a table with paths (3/4)")
 
     paths_df = preprocess.create_paths_df(
         config.derived_nifti_dir / "img", config.derived_nifti_dir / "seg"
     )
     paths_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
 
-    text = " Extracting features (4/4)"
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Extracting features (4/4)")
 
     feature_df = utils.extract_features(
         paths_df=paths_df,

@@ -43,8 +43,7 @@ def rename_images_with_timepoints(nifti_img_dir: Path, dicom_img_dir: Path):
         )
         if not matching_nifti_img_path.exists():
             log.warn(
-                f"Nifti image doesn't exist! ({str(matching_nifti_img_path)})"
-            )
+                f"Nifti image doesn't exist! ({str(matching_nifti_img_path)})")            )
         date = get_dcm_tag(dcm_ds, 0x00080013)
         if not patient_ID in dates:
             dates[patient_ID] = {}

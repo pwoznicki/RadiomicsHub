@@ -38,7 +38,6 @@ def convert_seg_to_nifti(dicom_seg_dir, save_dir, excluded_ids):
     ]
     for dicom_path in tqdm(dicom_paths):
         id_ = dicom_path.parents[2].name
-        print(dicom_path.parent.name)
         if "RETEST" in dicom_path.parent.name:
             timepoint = "RETEST"
         else:
@@ -59,9 +58,3 @@ def convert_seg_to_nifti(dicom_seg_dir, save_dir, excluded_ids):
             log.info(f"Conversion successful! (command: {(' ').join(cmd)}")
         except subprocess.CalledProcessError:
             log.error(f"Conversion failed! (command: {(' ').join(cmd)}")
-
-
-def postprocess_segmentations(nifti_seg_dir):
-    seg_paths = list(nifti_seg_dir.rglob("*.nii.gz"))
-    for seg_path in tqdm(seg_paths):
-        utils.binarize_segmentation(seg_path)

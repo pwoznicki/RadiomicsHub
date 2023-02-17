@@ -14,8 +14,7 @@ def run_pipeline():
 
     master_config.configure_logging(config.log_dir)
 
-    text = " Gathering metadata... (1/5)"
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Gathering metadata... (1/5)")
 
     ref_df = pd.read_csv(config.raw_table_dir / "trainNodules_gt.csv")
     ref_df_expanded = preprocess.expand_ref_df(ref_df)
@@ -23,8 +22,7 @@ def run_pipeline():
         config.derived_table_dir / "trainNodules_gt_expanded.csv", index=False
     )
 
-    text = " Converting .mhd/.raw images to .nii.gz (2/5) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Converting .mhd/.raw images to .nii.gz (2/5)")
 
     raw_img_dir = config.raw_data_dir / "img"
     raw_seg_dir = config.raw_data_dir / "seg"
@@ -35,8 +33,7 @@ def run_pipeline():
         derived_img_dir,
     )
 
-    text = " Converting .mhd/.raw segmentations to .nii.gz (3/5) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Converting .mhd/.raw segmentations to .nii.gz (3/5)")
 
     convert.convert_and_separate_masks_all(
         raw_seg_dir=raw_seg_dir,
@@ -44,8 +41,7 @@ def run_pipeline():
         expanded_ref_df=ref_df_expanded,
     )
 
-    text = " Creating reference tables (4/5) "
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Creating reference tables (4/5)")
 
     paths_df = preprocess.create_path_df(derived_img_dir, derived_seg_dir)
     paths_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
@@ -56,8 +52,7 @@ def run_pipeline():
         config.derived_table_dir / "labels.csv",
     )
 
-    text = " Extracting features (5/5)"
-    log.info(f"{text:#^80}")
+    utils.pretty_log("Extracting features (5/5)")
 
     feature_df = utils.extract_features(paths_df=paths_df, ID_colname="seg_ID")
     feature_df.to_csv(config.derived_table_dir / "features.csv", index=False)

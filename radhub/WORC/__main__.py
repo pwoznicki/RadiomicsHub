@@ -17,9 +17,7 @@ def run_pipeline(dataset_name: str, dataset_dir: Path):
 
     master_config.configure_logging(dataset_dir / "logs")
 
-    text = " Creating table with paths (1/2)"
-    log.info(f"{text:#^80}")
-
+    utils.pretty_log("Creating table with paths (1/2)")
     raw_label_df = pd.read_csv(dataset_dir / "raw" / "tables" / "labels.csv")
     raw_label_df = raw_label_df[
         ~raw_label_df["Subject"].isin(config.excluded_subjects)
@@ -42,9 +40,7 @@ def run_pipeline(dataset_name: str, dataset_dir: Path):
         index=False,
     )
 
-    text = " Extracting features (2/2)"
-    log.info(f"{text:#^80}")
-
+    utils.pretty_log("Extracting features (2/2)")
     extraction_params = extract.get_pyradiomics_param_file(dataset_name)
     feature_df = utils.extract_features(
         path_df,

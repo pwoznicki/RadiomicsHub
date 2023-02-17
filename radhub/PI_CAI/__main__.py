@@ -13,28 +13,23 @@ def run_pipeline():
 
     master_config.configure_logging(config.log_dir)
 
-    # text = " Preprocessing segmentations (1/3) "
-    # log.info(f"{text:#^80}")
+    utils.pretty_log("Preprocessing segmentations (1/3)")
 
-    # for roi in config.rois:
-    #     convert.convert_segmentations(
-    #         roi["raw_seg_dir"],
-    #         roi["derived_seg_dir"],
-    #     )
+    for roi in config.rois:
+        convert.convert_segmentations(
+            roi["raw_seg_dir"],
+            roi["derived_seg_dir"],
+        )
 
-    # text = " Creating reference tables (2/3) "
-    # log.info(f"{text:#^80}")
+    utils.pretty_log("Creating reference tables (2/3)")
+    label_df = pd.read_csv(config.label_table_path)
+    label_df.to_csv(config.derived_table_dir / "labels.csv", index=False)
 
-    # label_df = pd.read_csv(config.label_table_path)
-    # label_df.to_csv(config.derived_table_dir / "labels.csv", index=False)
-
-    # path_df = preprocess.get_paths(label_df)
-    # path_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
+    path_df = preprocess.get_paths(label_df)
+    path_df.to_csv(config.derived_table_dir / "paths.csv", index=False)
     path_df = pd.read_csv(config.derived_table_dir / "paths.csv")
 
-    text = " Extracting features (2/2) "
-    log.info(f"{text:#^80}")
-
+    utils.pretty_log("Extracting features (2/2)")
     feature_df = utils.extract_features(
         path_df,
         ID_colname="ROI_ID",
