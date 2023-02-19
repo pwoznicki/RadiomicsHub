@@ -13,6 +13,7 @@ More information about each dataset and the extracted radiomics features as well
 | LNDb                   | [Zenodo](https://zenodo.org/record/6613714#.Y8rTA9LMJkh)                                | ✔️     |
 | UPENN-GBM                   | [TCIA](https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=70225642#70225642c94d520b7b5f42e7925602d723412459)                                | ✔️     |
 | NSCLC-Radiomics | [TCIA](https://wiki.cancerimagingarchive.net/display/Public/NSCLC-Radiomics)     | ✔️     |
+| NSCLC-Radiogenomics | [TCIA](https://wiki.cancerimagingarchive.net/display/Public/NSCLC+Radiogenomics#286723474bf3bc54d8c14b93ba3b3b874b5b1a0b)     | ✔️     |
 | LUAD-CT-Survival | [TCIA](https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=24284406#24284406036220c66a5a436f90e4a0b54367bfae)     | ✔️     |
 | RIDER-Lung-CT | [TCIA](https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=46334165) | ✔️     |
 | PI-CAI                 | [Grand Challenge](https://pi-cai.grand-challenge.org/)                                  | ✔️     |

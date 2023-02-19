@@ -11,7 +11,7 @@
 1. Download DICOM images from https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=1966254 (takes a while...) \\
    Save them in a folder `<your_base_dir>/raw/dicom/img`.
 
-2. In the same link, go to _Detailed Description_, scroll down to _Diagnosis Data_ and download [tcia-diagnosis-data-2012-04-20.xls](https://wiki.cancerimagingarchive.net/download/attachments/3539039/tcia-diagnosis-data-2012-04-20.xls?version=1&modificationDate=1334930231098&api=v2). Save it in the folder `<your_base_dir>/raw/tables/`.
+2. In the same link, go to _Detailed Description_, scroll down to _Diagnosis Data_ and download [tcia-diagnosis-data-2012-04-20.xls](). Save it as`<your_base_dir>/raw/tables/`.
 
 3. Download segmentations (DICOM SEG) from https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=44499647
    Save them in `<your_base_dir>/raw/dicom/seg`.

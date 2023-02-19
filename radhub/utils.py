@@ -6,7 +6,6 @@ from pathlib import Path
 import SimpleITK as sitk
 from autorad.data.dataset import ImageDataset
 from autorad.feature_extraction.extractor import FeatureExtractor
-from fire import Fire
 from pqdm.threads import pqdm
 from tqdm import tqdm
 import nibabel as nib
@@ -184,7 +183,3 @@ def sitk_array_to_image(arr, ref_img):
     img = sitk.GetImageFromArray(arr)
     img.CopyInformation(ref_img)
     return img
-
-
-if __name__ == "__main__":
-    Fire()
