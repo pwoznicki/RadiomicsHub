@@ -6,6 +6,7 @@ from pathlib import Path
 import SimpleITK as sitk
 from autorad.data.dataset import ImageDataset
 from autorad.feature_extraction.extractor import FeatureExtractor
+from autorad.utils import io
 from pqdm.threads import pqdm
 from tqdm import tqdm
 import nibabel as nib
@@ -23,7 +24,7 @@ def pretty_log(text):
 
 def binarize_segmentations(nifti_data: Path | Sequence[Path], n_jobs=4):
     if isinstance(nifti_data, Path):
-        seg_paths = list(nifti_seg_dir.rglob("*.nii.gz"))
+        seg_paths = list(nifti_data.rglob("*.nii.gz"))
     else:
         seg_paths = nifti_data
     for seg_path in tqdm(seg_paths):
@@ -49,6 +50,32 @@ def read_dicom_sitk(input_dir: Path) -> sitk.Image:
     return image
 
 
+def convert_dicom_seg_dataset(
+    dicom_data: Path | Sequence[Path],
+    nifti_seg_dir: Path,
+    suffix="",
+):
+    dicom_dirs = get_dicom_dirs(dicom_data)
+    for dicom_dir in dicom_dirs:
+        seg_sitk = io.read_dicom_seg_sitk(dicom_dir)
+        id_ = dicom_dir.parents[2].name
+        output_dir = nifti_seg_dir / id_
+        output_dir.mkdir(parents=True, exist_ok=True)
+        sitk.WriteImage(seg_sitk, str(output_dir / f"seg_{suffix}.nii.gz"))
+
+
+def get_dicom_dirs(dicom_data: Path | Sequence[Path]):
+    if isinstance(dicom_data, Path):
+        if not dicom_data.exists():
+            raise FileNotFoundError(f"Directory not found: {dicom_data}")
+        dicom_dirs = (
+            child for child in dicom_data.iterdir() if child.is_dir()
+        )
+    else:
+        dicom_dirs = dicom_data
+    return dicom_dirs
+
+
 def convert_dicom_to_nifti(
     dicom_data: Path | Sequence[Path],
     nifti_img_dir,
@@ -57,14 +84,7 @@ def convert_dicom_to_nifti(
     ignore_derived=True,
     n_jobs=4,
 ):
-    if isinstance(dicom_data, Path):
-        if not dicom_data.exists():
-            raise FileNotFoundError(f"Directory not found: {dicom_data}")
-        dicom_img_dirs = (
-            child for child in dicom_data.iterdir() if child.is_dir()
-        )
-    else:
-        dicom_img_dirs = dicom_data
+    dicom_dirs = get_dicom_dirs(dicom_data)
     nifti_img_dir.mkdir(parents=True, exist_ok=True)
     if ignore_derived:
         dcm2niix_args = list(dcm2niix_args) + ["-i", "y"]
@@ -80,7 +100,7 @@ def convert_dicom_to_nifti(
             *dcm2niix_args,
             dicom_dir.as_posix(),
         ]
-        for dicom_dir in dicom_img_dirs
+        for dicom_dir in dicom_dirs
     )
     pqdm(img_cmds, convert_series, n_jobs=n_jobs)
 
@@ -150,6 +170,7 @@ def extract_features(
     mask_colname="seg_path",
     root_dir=None,
     n_jobs=-1,
+    mask_label=None,
 ):
     image_dset = ImageDataset(
         paths_df,
@@ -163,7 +184,7 @@ def extract_features(
         extraction_params=extraction_params,
         n_jobs=n_jobs,
     )
-    feature_df = extractor.run()
+    feature_df = extractor.run(mask_label=mask_label)
     return feature_df
 
 

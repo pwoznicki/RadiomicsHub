@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from radhub import master_config
+from radhub import master_config, utils
 from radhub.BraTS_2021 import extract, preprocess
 from radhub.BraTS_2021.config import config
 
