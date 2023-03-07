@@ -1,16 +1,16 @@
 import logging
-from typing import Sequence
 import subprocess
 from pathlib import Path
+from typing import Sequence
 
+import nibabel as nib
+import numpy as np
 import SimpleITK as sitk
 from autorad.data.dataset import ImageDataset
 from autorad.feature_extraction.extractor import FeatureExtractor
 from autorad.utils import io
 from pqdm.threads import pqdm
 from tqdm import tqdm
-import nibabel as nib
-import numpy as np
 
 logging.getLogger().setLevel(logging.CRITICAL)
 
@@ -191,7 +191,7 @@ def extract_features(
 def convert_sitk(in_path, out_path):
     if not Path(in_path).exists():
         raise FileNotFoundError(f"File {in_path} does not exist")
-    data = sitk.ReadImage(str(in_path))
+    data = io.read_image_sitk(in_path)
     Path(out_path).parent.mkdir(exist_ok=True, parents=True)
     sitk.WriteImage(data, str(out_path))
 

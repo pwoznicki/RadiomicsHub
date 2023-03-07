@@ -31,6 +31,7 @@ def convert_dataset(dicom_dir, output_dir):
         if not (derived_seg_dir / "PET.nii.gz").exists():
             pet_paths = convert_pet(raw_seg_path, derived_seg_dir)
             paths.extend(pet_paths)
+
     conversion_df = pd.DataFrame(paths, columns=["raw_path", "derived_path"])
     conversion_df["raw_path"] = conversion_df["raw_path"].apply(
         lambda x: x.relative_to(dicom_dir)
