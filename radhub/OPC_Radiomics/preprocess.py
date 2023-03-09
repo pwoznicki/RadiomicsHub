@@ -3,9 +3,6 @@ import logging
 import pandas as pd
 from platipy.dicom.io.rtstruct_to_nifti import convert_rtstruct
 from pqdm.threads import pqdm
-from tqdm import tqdm
-
-from radhub import utils
 
 log = logging.getLogger(__name__)
 
@@ -45,24 +42,10 @@ def convert_dataset(dicom_dir, output_dir, n_jobs=1):
     assert len(rt_files) == 605
     assert len(raw_ct_dirs) == 605
 
-    # save_paths = []
-    # ct_paths = {}
-    # for raw_ct_dir in raw_ct_dirs:
-    #     id_ = raw_ct_dir.parents[1].name
-    #     save_path = output_dir / id_ / "CT.nii.gz"
-    #     save_path.parent.mkdir(parents=True, exist_ok=True)
-    #     save_paths.append(save_path)
-    #     ct_paths[id_] = (ct_dir, save_path)
-
-    #  pqdm(
-    #      zip(ct_dirs, save_paths),
-    #      utils.convert_sitk,
-    #      n_jobs=n_jobs,
-    #      argument_type="args",
-    #  )
-
     ids = [raw_ct_dir.parents[1].name for raw_ct_dir in raw_ct_dirs]
     save_dirs = [output_dir / id_ for id_ in ids]
+    for save_dir in save_dirs:
+        save_dir.mkdir(parents=True, exist_ok=True)
     conversion_paths_nested = pqdm(
         (
             {
