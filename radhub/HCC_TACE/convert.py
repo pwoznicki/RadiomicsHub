@@ -77,7 +77,10 @@ def convert_dataset(raw_data_dir, derived_nifti_dir):
         conversion_paths.extend(img_conversion_paths)
         conversion_paths.extend(seg_conversion_paths)
 
-    return conversion_paths
+    conversion_df = utils.create_conversion_df(
+        conversion_paths, raw_data_dir, derived_nifti_dir
+    )
+    return conversion_df
 
 
 def get_acquisition_number(dcm_path: Path):

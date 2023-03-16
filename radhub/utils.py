@@ -8,9 +8,10 @@ import numpy as np
 import pydicom
 import pydicom_seg
 import SimpleITK as sitk
-from autorad.data.dataset import ImageDataset
+from autorad.data import ImageDataset
 from autorad.feature_extraction.extractor import FeatureExtractor
 from autorad.utils import io
+from platipy.dicom.io.rtstruct_to_nifti import convert_rtstruct
 from pqdm.threads import pqdm
 from tqdm import tqdm
 
@@ -232,3 +233,39 @@ def convert_seg(
 
         paths.append((raw_seg_path, output_path))
     return paths
+
+
+def convert_rt(
+    dcm_img, dcm_rt_file, output_dir, prefix="seg_", output_img="CT"
+):
+    convert_rtstruct(
+        dcm_img=dcm_img,
+        dcm_rt_file=dcm_rt_file,
+        output_dir=output_dir,
+        prefix=prefix,
+        output_img=output_img,
+    )
+    converted_paths = []
+    out_img_path = output_dir / f"{output_img}.nii.gz"
+    if out_img_path.exists():
+        converted_paths.append((dcm_img, out_img_path))
+    derived_seg_paths = list(output_dir.glob(f"{prefix}*.nii.gz"))
+    converted_paths.extend(
+        (dcm_rt_file, derived_seg_path)
+        for derived_seg_path in derived_seg_paths
+    )
+    return converted_paths
+
+
+def create_conversion_df(conversion_paths, dicom_dir=None, output_dir=None):
+    conversion_df = pd.DataFrame(
+        conversion_paths, columns=["raw_path", "derived_path"]
+    )
+    if dicom_dir is not None and output_dir is not None:
+        conversion_df["raw_path"] = conversion_df["raw_path"].apply(
+            lambda x: x.relative_to(dicom_dir)
+        )
+        conversion_df["derived_path"] = conversion_df["derived_path"].apply(
+            lambda x: x.relative_to(output_dir)
+        )
+    return conversion_df
