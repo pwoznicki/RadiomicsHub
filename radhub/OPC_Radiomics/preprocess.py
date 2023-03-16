@@ -2,18 +2,13 @@ import logging
 
 import pandas as pd
 from pqdm.threads import pqdm
-from tqdm import tqdm
-
-from radhub import utils
 
 log = logging.getLogger(__name__)
 
 
 def convert_dataset(dicom_dir, output_dir, n_jobs=1):
     ct_files = (
-        path
-        for path in dicom_dir.rglob("*.dcm")
-        if not path.name.endswith("1-1.dcm")
+        path for path in dicom_dir.rglob("*.dcm") if not path.name.endswith("1-1.dcm")
     )
     raw_ct_dirs = list(set(path.parent for path in ct_files))
 
@@ -37,28 +32,10 @@ def convert_dataset(dicom_dir, output_dir, n_jobs=1):
             continue
         rt_files.append(study_rt_files[0])
     raw_ct_dirs = [
-        raw_ct_dir
-        for raw_ct_dir in raw_ct_dirs
-        if raw_ct_dir not in cts_without_seg
+        raw_ct_dir for raw_ct_dir in raw_ct_dirs if raw_ct_dir not in cts_without_seg
     ]
     assert len(rt_files) == 605
     assert len(raw_ct_dirs) == 605
-
-    # save_paths = []
-    # ct_paths = {}
-    # for raw_ct_dir in raw_ct_dirs:
-    #     id_ = raw_ct_dir.parents[1].name
-    #     save_path = output_dir / id_ / "CT.nii.gz"
-    #     save_path.parent.mkdir(parents=True, exist_ok=True)
-    #     save_paths.append(save_path)
-    #     ct_paths[id_] = (ct_dir, save_path)
-
-    #  pqdm(
-    #      zip(ct_dirs, save_paths),
-    #      utils.convert_sitk,
-    #      n_jobs=n_jobs,
-    #      argument_type="args",
-    #  )
 
     ids = [raw_ct_dir.parents[1].name for raw_ct_dir in raw_ct_dirs]
     save_dirs = [output_dir / id_ for id_ in ids]
@@ -84,12 +61,8 @@ def convert_dataset(dicom_dir, output_dir, n_jobs=1):
         argument_type="kwargs",
     )
 
-    conversion_paths = [
-        path for paths in conversion_paths_nested for path in paths
-    ]
-    conversion_df = pd.DataFrame(
-        conversion_paths, columns=["raw_path", "derived_path"]
-    )
+    conversion_paths = [path for paths in conversion_paths_nested for path in paths]
+    conversion_df = pd.DataFrame(conversion_paths, columns=["raw_path", "derived_path"])
     conversion_df["raw_path"] = conversion_df["raw_path"].apply(
         lambda x: x.relative_to(dicom_dir)
     )
