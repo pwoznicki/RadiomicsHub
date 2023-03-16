@@ -2,7 +2,7 @@ from pathlib import Path
 
 from radhub import master_config
 
-base_dir = Path("/mnt/hard/radiomics-features/OPC-Radiomics")
+base_dir = Path("/mnt/hard/radiomics-features/HNSCC")
 raw_data_dir = base_dir / "raw" / "dicom"
 
 config = master_config.Config(

@@ -6,11 +6,12 @@ from typing import Sequence
 import nibabel as nib
 import numpy as np
 import SimpleITK as sitk
-from autorad.data.dataset import ImageDataset
+from autorad.data import ImageDataset
 from autorad.feature_extraction.extractor import FeatureExtractor
 from autorad.utils import io
 from pqdm.threads import pqdm
 from tqdm import tqdm
+from platipy.dicom.io.rtstruct_to_nifti import convert_rtstruct
 
 logging.getLogger().setLevel(logging.CRITICAL)
 
@@ -204,3 +205,25 @@ def sitk_array_to_image(arr, ref_img):
     img = sitk.GetImageFromArray(arr)
     img.CopyInformation(ref_img)
     return img
+
+
+def convert_rt(
+    dcm_img, dcm_rt_file, output_dir, prefix="seg_", output_img="CT"
+):
+    convert_rtstruct(
+        dcm_img=dcm_img,
+        dcm_rt_file=dcm_rt_file,
+        output_dir=output_dir,
+        prefix=prefix,
+        output_img=output_img,
+    )
+    converted_paths = []
+    out_img_path = output_dir / f"{output_img}.nii.gz"
+    if out_img_path.exists():
+        converted_paths.append((dcm_img, out_img_path))
+    derived_seg_paths = list(output_dir.glob(f"{prefix}*.nii.gz"))
+    converted_paths.extend(
+        (dcm_rt_file, derived_seg_path)
+        for derived_seg_path in derived_seg_paths
+    )
+    return converted_paths

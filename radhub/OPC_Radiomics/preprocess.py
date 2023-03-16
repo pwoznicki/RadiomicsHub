@@ -1,7 +1,6 @@
 import logging
 
 import pandas as pd
-from platipy.dicom.io.rtstruct_to_nifti import convert_rtstruct
 from pqdm.threads import pqdm
 from tqdm import tqdm
 
@@ -63,6 +62,8 @@ def convert_dataset(dicom_dir, output_dir, n_jobs=1):
 
     ids = [raw_ct_dir.parents[1].name for raw_ct_dir in raw_ct_dirs]
     save_dirs = [output_dir / id_ for id_ in ids]
+    for save_dir in tqdm(save_dirs):
+        save_dir.mkdir(parents=True, exist_ok=True)
     conversion_paths_nested = pqdm(
         (
             {
@@ -78,7 +79,7 @@ def convert_dataset(dicom_dir, output_dir, n_jobs=1):
                 save_dirs,
             )
         ),
-        convert_rt,
+        utils.convert_rt,
         n_jobs=n_jobs,
         argument_type="kwargs",
     )
@@ -96,25 +97,3 @@ def convert_dataset(dicom_dir, output_dir, n_jobs=1):
         lambda x: x.relative_to(output_dir)
     )
     return conversion_df
-
-
-def convert_rt(
-    dcm_img, dcm_rt_file, output_dir, prefix="seg_", output_img="CT"
-):
-    convert_rtstruct(
-        dcm_img=dcm_img,
-        dcm_rt_file=dcm_rt_file,
-        output_dir=output_dir,
-        prefix=prefix,
-        output_img=output_img,
-    )
-    converted_paths = []
-    out_img_path = output_dir / f"{output_img}.nii.gz"
-    if out_img_path.exists():
-        converted_paths.append((dcm_img, out_img_path))
-    derived_seg_paths = list(output_dir.glob(f"{prefix}*.nii.gz"))
-    converted_paths.extend(
-        (dcm_rt_file, derived_seg_path)
-        for derived_seg_path in derived_seg_paths
-    )
-    return converted_paths
