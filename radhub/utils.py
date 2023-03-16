@@ -5,6 +5,8 @@ from typing import Sequence
 
 import nibabel as nib
 import numpy as np
+import pydicom
+import pydicom_seg
 import SimpleITK as sitk
 from autorad.data.dataset import ImageDataset
 from autorad.feature_extraction.extractor import FeatureExtractor
@@ -68,8 +70,8 @@ def get_dicom_dirs(dicom_data: Path | Sequence[Path]):
     if isinstance(dicom_data, Path):
         if not dicom_data.exists():
             raise FileNotFoundError(f"Directory not found: {dicom_data}")
-        dicom_dirs = (
-            child for child in dicom_data.iterdir() if child.is_dir()
+        dicom_dirs = list(
+            set(dicom_dir.parent for dicom_dir in dicom_data.rglob("*.dcm"))
         )
     else:
         dicom_dirs = dicom_data
@@ -193,7 +195,11 @@ def convert_sitk(in_path, out_path):
         raise FileNotFoundError(f"File {in_path} does not exist")
     data = io.read_image_sitk(in_path)
     Path(out_path).parent.mkdir(exist_ok=True, parents=True)
+    if Path(out_path).exists():
+        log.warning(f"File {out_path} already exists, overwriting")
     sitk.WriteImage(data, str(out_path))
+
+    return in_path, out_path
 
 
 def sitk_array_to_image(arr, ref_img):
@@ -204,3 +210,25 @@ def sitk_array_to_image(arr, ref_img):
     img = sitk.GetImageFromArray(arr)
     img.CopyInformation(ref_img)
     return img
+
+
+def convert_seg(
+    raw_seg_path: Path, output_dir: Path
+) -> list[tuple[Path, Path]]:
+    dcm = pydicom.dcmread(raw_seg_path)
+
+    reader = pydicom_seg.SegmentReader()
+    result = reader.read(dcm)
+    paths = []
+    for segment_ID in result.available_segments:
+        segment_meta = result.segment_infos[segment_ID]
+        roi = segment_meta.SegmentLabel.replace(" ", "_")
+        image = result.segment_image(segment_ID)
+        output_path = output_dir / f"seg_{roi}.nii.gz"
+        if output_path.exists():
+            log.warn("Output path already exists: %s", output_path)
+        output_path.parent.mkdir(exist_ok=True, parents=True)
+        sitk.WriteImage(image, str(output_path))
+
+        paths.append((raw_seg_path, output_path))
+    return paths

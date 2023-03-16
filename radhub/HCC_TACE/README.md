@@ -27,23 +27,6 @@
 
 ## Notes
 
-For each segmented case, 4 masks available: 
-- Liver (without the tumor and the portal vein)
-- Aorta (part) 
-- Portal vein with branches
-- Liver tumor (Mass)
-
-The images which have the segmentations, are saved as multiphase series. 
-That's why the conversion included separation of each phase (using AcquisitionNumber) and then conversion to NIfTI. \\
-The phases are saved in the following order:
-- 1: late arterial phase
-- 2: portal venous (pv) phase
-- 3: delayed phase
-
-85/104 cases have pv phase in the series where segmentation was done.
-23/104 cases have late arterial phase, and 23/104 have delayed phase.
-For consistency, we only extract features from pv phase.
-
 ## Citation
 
 **Data citation**:
