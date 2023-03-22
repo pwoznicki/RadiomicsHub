@@ -1,19 +1,18 @@
+import argparse
 import logging
 from pathlib import Path
-import argparse
-
 
 import pandas as pd
 
 from radhub import master_config, utils
-from radhub.WORC import extract, preprocess, config
+from radhub.WORC import config, extract, preprocess
 
 log = logging.getLogger(__name__)
 
 
-def run_pipeline(dataset_name: str, dataset_dir: Path):
+def run_pipeline(dataset_name: str, dataset_dir: Path, extraction_params=None):
     if not dataset_name in config.datasets:
-        raise ValueError(f"Dataset {name} not in {config.datasets}")
+        raise ValueError(f"Dataset {dataset_name} not in {config.datasets}")
 
     master_config.configure_logging(dataset_dir / "logs")
 
@@ -24,9 +23,9 @@ def run_pipeline(dataset_name: str, dataset_dir: Path):
     ]
 
     path_df, label_df = preprocess.create_path_df_for_single_dataset(
-        dataset_name,
-        raw_label_df,
-        dataset_dir,
+        dataset_name=dataset_name,
+        raw_label_df=raw_label_df,
+        dataset_dir=dataset_dir,
     )
 
     derived_table_dir = dataset_dir / "derived" / "tables"
@@ -41,11 +40,12 @@ def run_pipeline(dataset_name: str, dataset_dir: Path):
     )
 
     utils.pretty_log("Extracting features (2/2)")
-    extraction_params = extract.get_pyradiomics_param_file(dataset_name)
+    if not extraction_params:
+        extraction_params = extract.get_pyradiomics_param_file(dataset_name)
     feature_df = utils.extract_features(
         path_df,
         ID_colname="subject_ID",
-        extraction_params="MR_default.yaml",
+        extraction_params=extraction_params,
     )
     feature_df.to_csv(derived_table_dir / f"features.csv", index=False)
 

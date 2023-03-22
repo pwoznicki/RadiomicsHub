@@ -20,3 +20,5 @@ excluded_subjects = [
     "Melanoma-100",
     "GIST-244",
 ]
+
+subjects_with_two_segmentations = ["GIST-018"]

@@ -1,8 +1,7 @@
 from pathlib import Path
 
-import pandas as pd
-
 import config
+import pandas as pd
 
 
 def get_mask_suffix(subject):
@@ -10,18 +9,10 @@ def get_mask_suffix(subject):
         return "_lesion0_RAD"
     elif (
         subject.startswith("Melanoma")
-        or subject in subjects_with_two_segmentations
+        or subject in config.subjects_with_two_segmentations
     ):
         return "_lesion0"
     return ""
-
-
-subjects_with_two_segmentations = ["GIST-018"]
-
-
-def create_path_df_for_all_datasets():
-    for dataset in config.datasets:
-        create_path_df_for_single_dataset(dataset)
 
 
 def create_path_df_for_single_dataset(
@@ -74,11 +65,3 @@ def get_modality(row):
         return "MR"
     else:
         raise ValueError(f"No modality found for Subject: {row.Subject}")
-
-
-def main():
-    create_path_df_for_all_datasets()
-
-
-if __name__ == "__main__":
-    main()

@@ -1,7 +1,7 @@
 import logging
 import subprocess
 from pathlib import Path
-from typing import Sequence
+from typing import Iterable, Sequence
 
 import nibabel as nib
 import numpy as np
@@ -80,7 +80,7 @@ def get_dicom_dirs(dicom_data: Path | Sequence[Path]):
 
 
 def convert_dicom_to_nifti(
-    dicom_data: Path | Sequence[Path],
+    dicom_data: Path | Iterable[Path],
     nifti_img_dir,
     filename_pattern="%i",
     *dcm2niix_args,

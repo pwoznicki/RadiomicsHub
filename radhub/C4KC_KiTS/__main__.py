@@ -1,7 +1,5 @@
 import logging
 
-import pandas as pd
-
 from radhub import master_config, utils
 from radhub.C4KC_KiTS.config import config
 
@@ -12,7 +10,7 @@ def run_pipeline():
 
     master_config.configure_logging(config.log_dir)
 
-    utils.pretty_log("Converting DICOM images to Nifti (1/4)")
+    utils.pretty_log("Converting DICOM images to Nifti (1/3)")
     dicom_segs = [
         path
         for path in config.raw_data_dir.rglob("*.dcm")
@@ -33,14 +31,14 @@ def run_pipeline():
         n_jobs=8,
     )
 
-    utils.pretty_log("Converting DICOM segmentations to Nifti (2/4)")
+    utils.pretty_log("Converting DICOM segmentations to Nifti (2/3)")
     utils.convert_dicom_seg_dataset(
         dicom_data=dicom_segs,
         nifti_seg_dir=config.derived_nifti_dir,
         suffix="arterial",
     )
 
-    utils.pretty_log("Extracting features (4/4)")
+    utils.pretty_log("Extracting features (3/3)")
 
 
 if __name__ == "__main__":
