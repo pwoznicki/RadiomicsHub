@@ -5,6 +5,7 @@ from typing import Iterable, Sequence
 
 import nibabel as nib
 import numpy as np
+import pandas as pd
 import pydicom
 import pydicom_seg
 import SimpleITK as sitk
@@ -67,7 +68,7 @@ def convert_dicom_seg_dataset(
         sitk.WriteImage(seg_sitk, str(output_dir / f"seg_{suffix}.nii.gz"))
 
 
-def get_dicom_dirs(dicom_data: Path | Sequence[Path]):
+def get_dicom_dirs(dicom_data: Path | Iterable[Path]):
     if isinstance(dicom_data, Path):
         if not dicom_data.exists():
             raise FileNotFoundError(f"Directory not found: {dicom_data}")
@@ -99,9 +100,9 @@ def convert_dicom_to_nifti(
             "-f",
             filename_pattern,
             "-o",
-            nifti_img_dir.as_posix(),
+            str(nifti_img_dir),
             *dcm2niix_args,
-            dicom_dir.as_posix(),
+            str(dicom_dir),
         ]
         for dicom_dir in dicom_dirs
     )
@@ -152,17 +153,46 @@ def convert_series(cmd: list[str]):
         log.error(f"Error: {e.output}")
 
 
+def convert_dicom_sitk(
+    dicom_data: Path | Iterable[Path],
+    output_dir: str,
+    ext_to: str = ".nii.gz",
+    n_jobs=4,
+):
+    dicom_dirs = get_dicom_dirs(dicom_data)
+    args = [
+        (
+            img_path,
+            Path(output_dir)
+            / Path(img_path).parents[1].name
+            / (Path(img_path).name.split("-")[1].replace(" ", "_") + ext_to),
+        )
+        for img_path in dicom_dirs
+    ]
+    conversion_paths = pqdm(
+        args, convert_sitk, n_jobs=n_jobs, argument_type="args"
+    )
+
+    return conversion_paths
+
+
 def convert_dir_sitk(
     input_dir: str,
     output_dir: str,
     ext_from: str = ".mhd",
     ext_to: str = ".nii.gz",
+    n_jobs=4,
 ):
-    for img_path in tqdm(list(Path(input_dir).glob("*" + ext_from))):
-        out_img_path = Path(output_dir) / (
-            img_path.name.split(".")[0] + ext_to
-        )
-        convert_sitk(img_path, out_img_path)
+    args = (
+        (img_path, Path(output_dir) / (img_path.name.split(".")[0] + ext_to))
+        for img_path in Path(input_dir).glob("*" + ext_from)
+    )
+    pqdm(args, convert_sitk, n_jobs=n_jobs)
+    # for img_path in tqdm(list(Path(input_dir).glob("*" + ext_from))):
+    #     out_img_path = Path(output_dir) / (
+    #         img_path.name.split(".")[0] + ext_to
+    #     )
+    #     convert_sitk(img_path, out_img_path)
 
 
 def extract_features(
@@ -193,11 +223,11 @@ def extract_features(
 
 def convert_sitk(in_path, out_path):
     if not Path(in_path).exists():
-        raise FileNotFoundError(f"File {in_path} does not exist")
-    data = io.read_image_sitk(in_path)
+        raise FileNotFoundError(f"File {str(in_path)} does not exist")
+    data = io.read_image_sitk(Path(in_path))
     Path(out_path).parent.mkdir(exist_ok=True, parents=True)
     if Path(out_path).exists():
-        log.warning(f"File {out_path} already exists, overwriting")
+        log.warning(f"File {str(out_path)} already exists, overwriting")
     sitk.WriteImage(data, str(out_path))
 
     return in_path, out_path
@@ -236,23 +266,31 @@ def convert_seg(
 
 
 def convert_rt(
-    dcm_img, dcm_rt_file, output_dir, prefix="seg_", output_img="CT"
+    dcm_img,
+    dcm_rt_path,
+    output_dir,
+    prefix="seg_",
+    out_img_stem=None,
 ):
-    convert_rtstruct(
-        dcm_img=dcm_img,
-        dcm_rt_file=dcm_rt_file,
-        output_dir=output_dir,
-        prefix=prefix,
-        output_img=output_img,
-    )
+    Path(output_dir).mkdir(exist_ok=True, parents=True)
+    # convert_rtstruct(
+    #     dcm_img=dcm_img,
+    #     dcm_rt_file=dcm_rt_path,
+    #     output_dir=output_dir,
+    #     prefix=prefix,
+    #     output_img=out_img_stem,
+    # )
     converted_paths = []
-    out_img_path = output_dir / f"{output_img}.nii.gz"
-    if out_img_path.exists():
-        converted_paths.append((dcm_img, out_img_path))
+    if out_img_stem:
+        derived_img_path = output_dir / f"{out_img_stem}.nii.gz"
+        if derived_img_path.exists():
+            converted_paths.append((dcm_img, derived_img_path))
     derived_seg_paths = list(output_dir.glob(f"{prefix}*.nii.gz"))
     converted_paths.extend(
-        (dcm_rt_file, derived_seg_path)
-        for derived_seg_path in derived_seg_paths
+        [
+            (dcm_rt_path, str(derived_seg_path))
+            for derived_seg_path in derived_seg_paths
+        ]
     )
     return converted_paths
 
@@ -269,3 +307,36 @@ def create_conversion_df(conversion_paths, dicom_dir=None, output_dir=None):
             lambda x: x.relative_to(output_dir)
         )
     return conversion_df
+
+
+def is_dicom_a_match(dcm_img: pydicom.Dataset, dcm_seg: pydicom.Dataset):
+    img_id = dcm_img.SeriesInstanceUID
+    if dcm_seg.Modality == "SEG":
+        try:
+            referenced_id = dcm_seg.ReferencedSeriesSequence[
+                0
+            ].SeriesInstanceUID
+        except AttributeError:
+            log.warning(
+                f"Could not find ReferencedSeriesSequence for DICOM SEG: {dcm_seg.PatientID}"
+            )
+            return False
+    elif dcm_seg.Modality == "RTSTRUCT":
+        try:
+            referenced_id = (
+                dcm_seg.ReferencedFrameOfReferenceSequence[0]
+                .RTReferencedStudySequence[0]
+                .RTReferencedSeriesSequence[0]
+                .SeriesInstanceUID
+            )
+        except AttributeError:
+            log.warning(
+                f"Could not find info about referenced series for RTSTRUCT: {dcm_seg.PatientID}"
+            )
+            return False
+    else:
+        log.error(
+            f"Unknown Modality {dcm_seg.Modality} for DICOM file {dcm_seg.PatientID}"
+        )
+        return False
+    return img_id == referenced_id
