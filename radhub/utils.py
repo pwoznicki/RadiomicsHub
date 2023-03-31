@@ -165,7 +165,13 @@ def convert_dicom_sitk(
             img_path,
             Path(output_dir)
             / Path(img_path).parents[1].name
-            / (Path(img_path).name.split("-")[1].replace(" ", "_") + ext_to),
+            / (
+                ("_")
+                .join(Path(img_path).name.split("-")[1:-1])
+                .replace(" ", "_")
+                .replace(".", "")
+                + ext_to
+            ),
         )
         for img_path in dicom_dirs
     ]
@@ -306,6 +312,7 @@ def create_conversion_df(conversion_paths, dicom_dir=None, output_dir=None):
         conversion_df["derived_path"] = conversion_df["derived_path"].apply(
             lambda x: x.relative_to(output_dir)
         )
+    conversion_df = conversion_df.astype("str")
     return conversion_df
 
 

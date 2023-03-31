@@ -46,23 +46,6 @@ def find_data(raw_dicom_dir: Path):
 def convert_dataset(raw_path_df, derived_nifti_dir, n_jobs=4):
     raw_img_paths = raw_path_df["img_path"].tolist()
     raw_seg_paths = raw_path_df["seg_path"].tolist()
-    # utils.convert_dicom_to_nifti(
-    #     dicom_data=img_paths,
-    #     nifti_img_dir=derived_nifti_dir,
-    #     filename_pattern="%i/%d",
-    #     ignore_derived=False,
-    # )
-    # img_conversion_paths = utils.convert_dicom_sitk(
-    #     dicom_data=img_paths,
-    #     output_dir=derived_nifti_dir,
-    #     n_jobs=6,
-    # )
-    # seg_conversion_paths = seg_paths = raw_path_df["seg_path"].tolist()
-    # for (raw_img_path, derived_img_path), seg_path in tqdm(
-    #     list(zip(img_conversion_paths, seg_paths))
-    # ):
-    #     id_ = Path(raw_img_path).parents[1].name
-    #     output_fname = derived_img_path.name.removesuffix(".nii.gz")
     output_dirs = [
         derived_nifti_dir / Path(p).parents[1].name for p in raw_img_paths
     ]
