@@ -41,12 +41,6 @@ def create_paths_df(derived_nifti_dir):
     T2_names = ["FSE", "T2", "t2", "K2"]
     T1_names = ["T1", "t1", "SPGR", "BRAVO", "Bravo"]
 
-    # df = pd.DataFrame(
-    #     {"patient_ID": [p.name for p in derived_nifti_dir.iterdir()]}
-    # )
-    # df["seg_path"] = df["patient_ID"].apply(
-    #     lambda x: conversion_df["derived_path"]
-    # df["mod"] = df["derived_path"].apply(lambda x: i)
     results = []
     for case_dir in derived_nifti_dir.iterdir():
         if not case_dir.is_dir():
