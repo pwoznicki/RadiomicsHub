@@ -13,22 +13,6 @@ from radhub.Meningioma_SEG_CLASS import config
 log = logging.getLogger(__name__)
 
 
-def find_matching_img(
-    rtstruct_path: Path, dcm_img_data: Path | Iterable[Path]
-):
-    dicom_dirs = utils.get_dicom_dirs(dcm_img_data)
-    for dicom_dir in dicom_dirs:
-        dcm_img_path = next(dicom_dir.glob("*.dcm"))
-        dcm_img = pydicom.dcmread(dcm_img_path)
-        dcm_seg = pydicom.dcmread(rtstruct_path)
-        if not dcm_img.Modality == "MR":
-            pass
-        assert dcm_seg.Modality == "RTSTRUCT"
-        if utils.is_dicom_a_match(dcm_img, dcm_seg):
-            return dcm_img_path.parent
-    log.error(f"No matching image found for {rtstruct_path}")
-
-
 def find_data(raw_dicom_dir: Path):
     rtstruct_paths = list(raw_dicom_dir.rglob("1-1.dcm"))
     results = []
@@ -36,7 +20,7 @@ def find_data(raw_dicom_dir: Path):
         if config.EXCLUDED_ID in str(rtstruct_path):
             continue
         study_dir = rtstruct_path.parents[1]
-        img_path = find_matching_img(rtstruct_path, study_dir)
+        img_path = utils.find_matching_img(rtstruct_path, study_dir)
         if img_path is not None:
             results.append((str(img_path), str(rtstruct_path)))
     result_df = pd.DataFrame(results, columns=["img_path", "seg_path"])
@@ -46,29 +30,16 @@ def find_data(raw_dicom_dir: Path):
 def convert_dataset(raw_path_df, derived_nifti_dir, n_jobs=4):
     raw_img_paths = raw_path_df["img_path"].tolist()
     raw_seg_paths = raw_path_df["seg_path"].tolist()
-    output_dirs = [
-        derived_nifti_dir / Path(p).parents[1].name for p in raw_img_paths
-    ]
     out_fnames = [
         Path(p).name.split("-")[1].replace(" ", "-") for p in raw_img_paths
     ]
-    prefixes = [f"seg_{out_fname}_" for out_fname in out_fnames]
-    arg_dict = dict(
-        dcm_img=raw_img_paths,
-        dcm_rt_path=raw_seg_paths,
-        output_dir=output_dirs,
-        prefix=prefixes,
-        out_img_stem=out_fnames,
+    conversion_df = utils.convert_rt_dataset(
+        raw_img_paths=raw_img_paths,
+        raw_rt_paths=raw_seg_paths,
+        derived_nifti_dir=derived_nifti_dir,
+        out_fnames=out_fnames,
+        n_jobs=n_jobs,
     )
-    args = pd.DataFrame(arg_dict).to_dict(orient="records")
-    conversion_paths_nested = pqdm(
-        args, utils.convert_rt, n_jobs=n_jobs, argument_type="kwargs"
-    )
-    conversion_paths = [
-        item for sublist in conversion_paths_nested for item in sublist
-    ]
-    conversion_df = utils.create_conversion_df(conversion_paths)
-
     return conversion_df
 
 

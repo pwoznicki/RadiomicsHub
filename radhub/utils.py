@@ -279,13 +279,13 @@ def convert_rt(
     out_img_stem=None,
 ):
     Path(output_dir).mkdir(exist_ok=True, parents=True)
-    # convert_rtstruct(
-    #     dcm_img=dcm_img,
-    #     dcm_rt_file=dcm_rt_path,
-    #     output_dir=output_dir,
-    #     prefix=prefix,
-    #     output_img=out_img_stem,
-    # )
+    convert_rtstruct(
+        dcm_img=dcm_img,
+        dcm_rt_file=dcm_rt_path,
+        output_dir=output_dir,
+        prefix=prefix,
+        output_img=out_img_stem,
+    )
     converted_paths = []
     if out_img_stem:
         derived_img_path = output_dir / f"{out_img_stem}.nii.gz"
@@ -347,3 +347,47 @@ def is_dicom_a_match(dcm_img: pydicom.Dataset, dcm_seg: pydicom.Dataset):
         )
         return False
     return img_id == referenced_id
+
+
+def find_matching_img(
+    rtstruct_path: Path, dcm_img_data: Path | Iterable[Path]
+):
+    dicom_dirs = get_dicom_dirs(dcm_img_data)
+    for dicom_dir in dicom_dirs:
+        dcm_img_path = next(dicom_dir.glob("*.dcm"))
+        dcm_img = pydicom.dcmread(dcm_img_path)
+        dcm_seg = pydicom.dcmread(rtstruct_path)
+        if not dcm_img.Modality == "MR":
+            pass
+        assert dcm_seg.Modality == "RTSTRUCT"
+        if is_dicom_a_match(dcm_img, dcm_seg):
+            return dcm_img_path.parent
+    log.error(f"No matching image found for {rtstruct_path}")
+
+
+def convert_rt_dataset(
+    raw_img_paths, raw_rt_paths, derived_nifti_dir, out_fnames=None, n_jobs=8
+):
+    output_dirs = [
+        derived_nifti_dir / Path(p).parents[1].name for p in raw_img_paths
+    ]
+    if out_fnames == None:
+        out_fnames = [None for _ in output_dirs]
+    prefixes = [f"seg_{out_fname}_" for out_fname in out_fnames]
+    arg_dict = dict(
+        dcm_img=raw_img_paths,
+        dcm_rt_path=raw_rt_paths,
+        output_dir=output_dirs,
+        prefix=prefixes,
+        out_img_stem=out_fnames,
+    )
+    args = pd.DataFrame(arg_dict).to_dict(orient="records")
+    conversion_paths_nested = pqdm(
+        args, convert_rt, n_jobs=n_jobs, argument_type="kwargs"
+    )
+    conversion_paths = [
+        item for sublist in conversion_paths_nested for item in sublist
+    ]
+    conversion_df = create_conversion_df(conversion_paths)
+
+    return conversion_df
