@@ -56,7 +56,7 @@ def convert_dataset(dicom_dir, output_dir, n_jobs=1):
                 "dcm_rt_file": rt_file,
                 "output_dir": save_dir,
                 "prefix": "seg_",
-                "output_img": "CT",
+                "out_img_stem": "CT",
             }
             for raw_ct_dir, rt_file, save_dir in zip(
                 raw_ct_dirs,

@@ -36,10 +36,10 @@ def binarize_segmentations(nifti_data: Path | Sequence[Path], n_jobs=4):
 
 
 def binarize_segmentation(nifti_path: Path):
-    img = nib.load(nifti_path)
-    arr = img.get_fdata()
-    arr = (arr > 0).astype(np.uint8)
-    new_img = nib.Nifti1Image(arr, img.affine, img.header)
+    with nib.load(nifti_path) as img:
+        arr = img.get_fdata()
+        arr = (arr > 0).astype(np.uint8)
+        new_img = nib.Nifti1Image(arr, img.affine, img.header)
     nib.save(new_img, nifti_path)
 
 
