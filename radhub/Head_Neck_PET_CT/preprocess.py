@@ -9,11 +9,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-def is_rtstruct(dcm_path):
-    dcm_img = pydicom.dcmread(dcm_path)
-    return dcm_img.Modality == "RTSTRUCT"
-
-
 def get_series_description(dcm_path):
     dcm_img = pydicom.dcmread(dcm_path)
     try:
@@ -33,7 +28,7 @@ def get_modality(series_description):
 
 def find_data(raw_dicom_dir):
     candidate_seg_paths = list(raw_dicom_dir.rglob("1-1.dcm"))
-    is_rtstruct_list = pqdm(candidate_seg_paths, is_rtstruct, n_jobs=16)
+    is_rtstruct_list = pqdm(candidate_seg_paths, utils.is_rtstruct, n_jobs=16)
     rtstruct_paths = [
         p
         for p, is_rtstruct in zip(candidate_seg_paths, is_rtstruct_list)
@@ -88,8 +83,12 @@ def find_data(raw_dicom_dir):
     raw_path_df.append(
         pd.DataFrame(
             {
-                "img_path": ["/mnt/hard/radiomics-features/Head-Neck-PET-CT/raw/dicom/HN-HGJ-030/08-27-1885-NA-PET HEAD NECK-94646/1.000000-PET AC 21-49095"],
-                "rt_path": ["/mnt/hard/radiomics-features/Head-Neck-PET-CT/raw/dicom/HN-HGJ-030/08-27-1885-NA-PET HEAD NECK-94646/1.000000-RTstructCTsim-PETPET-CT-89245/1-1.dcm"],
+                "img_path": [
+                    "/mnt/hard/radiomics-features/Head-Neck-PET-CT/raw/dicom/HN-HGJ-030/08-27-1885-NA-PET HEAD NECK-94646/1.000000-PET AC 21-49095"
+                ],
+                "rt_path": [
+                    "/mnt/hard/radiomics-features/Head-Neck-PET-CT/raw/dicom/HN-HGJ-030/08-27-1885-NA-PET HEAD NECK-94646/1.000000-RTstructCTsim-PETPET-CT-89245/1-1.dcm"
+                ],
                 "series_description": ["RTstruct_CTsim->PET(PET-CT)"],
             },
         )

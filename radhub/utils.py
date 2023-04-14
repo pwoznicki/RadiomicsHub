@@ -291,7 +291,9 @@ def convert_rt(
     converted_paths = []
     if out_img_stem:
         derived_img_path = output_dir / f"{out_img_stem}.nii.gz"
-        if derived_img_path.exists():
+        if not derived_img_path.exists():
+            log.warning("Converted image does not exist: %s", derived_img_path)
+        else:
             converted_paths.append((dcm_img, derived_img_path))
     derived_seg_paths = list(output_dir.glob(f"{prefix}*.nii.gz"))
     converted_paths.extend(
@@ -368,13 +370,15 @@ def find_matching_img(
 
 
 def convert_rt_dataset(
-    raw_img_paths, raw_rt_paths, derived_nifti_dir, out_fnames=None, n_jobs=8
+    raw_img_paths, raw_rt_paths, derived_nifti_dir, out_fname=None, n_jobs=8
 ):
     output_dirs = [
         derived_nifti_dir / Path(p).parents[1].name for p in raw_img_paths
     ]
-    if out_fnames == None:
-        out_fnames = [None for _ in output_dirs]
+    if not isinstance(out_fname, list):
+        out_fnames = [out_fname for _ in output_dirs]
+    else:
+        out_fnames = out_fname
     prefixes = [f"seg_{out_fname}_" for out_fname in out_fnames]
     arg_dict = dict(
         dcm_img=raw_img_paths,
@@ -388,8 +392,18 @@ def convert_rt_dataset(
         args, convert_rt, n_jobs=n_jobs, argument_type="kwargs"
     )
     conversion_paths = [
-        item for sublist in conversion_paths_nested for item in sublist
+        item for sublist in conversion_paths_nested for item in sublist if item
     ]
     conversion_df = create_conversion_df(conversion_paths)
 
     return conversion_df
+
+
+def is_rtstruct(dcm_path):
+    dcm_img = pydicom.dcmread(dcm_path)
+    return dcm_img.Modality == "RTSTRUCT"
+
+
+def get_modality(dcm_path):
+    dcm_img = pydicom.dcmread(dcm_path)
+    return dcm_img.Modality
