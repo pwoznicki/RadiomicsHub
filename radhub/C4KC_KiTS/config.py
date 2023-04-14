@@ -2,7 +2,7 @@ from pathlib import Path
 
 from radhub import master_config
 
-base_dir = Path("/mnt/hard/radiomics-features/C4KC-KiTS")
+base_dir = Path("/Volumes/pw-data/radiomics-features/C4KC-KiTS")
 raw_data_dir = base_dir / "raw" / "dicom"
 
 config = master_config.Config(

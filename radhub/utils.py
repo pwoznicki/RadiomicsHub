@@ -155,8 +155,9 @@ def convert_series(cmd: list[str]):
 
 def convert_dicom_sitk(
     dicom_data: Path | Iterable[Path],
-    output_dir: str,
+    output_dir: Path,
     ext_to: str = ".nii.gz",
+    prefix="",
     n_jobs=4,
 ):
     dicom_dirs = get_dicom_dirs(dicom_data)
@@ -166,7 +167,8 @@ def convert_dicom_sitk(
             Path(output_dir)
             / Path(img_path).parents[1].name
             / (
-                ("_")
+                prefix
+                + ("_")
                 .join(Path(img_path).name.split("-")[1:-1])
                 .replace(" ", "_")
                 .replace(".", "")
