@@ -153,27 +153,32 @@ def convert_series(cmd: list[str]):
         log.error(f"Error: {e.output}")
 
 
-def convert_dicom_sitk(
+def convert_dataset_sitk(
     dicom_data: Path | Iterable[Path],
     output_dir: Path,
     ext_to: str = ".nii.gz",
+    out_fname=None,
     prefix="",
     n_jobs=4,
-):
+) -> pd.DataFrame:
+    def get_fname(img_path, fname):
+        if not fname:
+            return (
+                prefix.join(Path(img_path).name.split("-")[1:-1])
+                .replace(" ", "_")
+                .replace(".", "")
+                + ext_to
+            )
+        else:
+            return prefix + fname + ext_to
+
     dicom_dirs = get_dicom_dirs(dicom_data)
     args = [
         (
             img_path,
             Path(output_dir)
             / Path(img_path).parents[1].name
-            / (
-                prefix
-                + ("_")
-                .join(Path(img_path).name.split("-")[1:-1])
-                .replace(" ", "_")
-                .replace(".", "")
-                + ext_to
-            ),
+            / get_fname(img_path, out_fname),
         )
         for img_path in dicom_dirs
     ]
@@ -181,7 +186,13 @@ def convert_dicom_sitk(
         args, convert_sitk, n_jobs=n_jobs, argument_type="args"
     )
 
-    return conversion_paths
+    # breakpoint()
+    # conversion_paths = [
+    #     path for paths in conversion_paths_nested for path in paths
+    # ]
+    conversion_df = create_conversion_df(conversion_paths)
+
+    return conversion_df
 
 
 def convert_dir_sitk(
@@ -273,6 +284,30 @@ def convert_seg(
     return paths
 
 
+def convert_seg_dataset(
+    raw_seg_paths: Iterable[Path], output_dir: Path, n_jobs=4
+) -> pd.DataFrame:
+    kwargs = (
+        dict(
+            raw_seg_path=raw_seg_path,
+            output_dir=output_dir / raw_seg_path.parents[2].name,
+        )
+        for raw_seg_path in raw_seg_paths
+    )
+    conversion_paths_nested = pqdm(
+        kwargs,
+        convert_seg,
+        n_jobs=n_jobs,
+        argument_type="kwargs",
+    )
+    conversion_paths = [
+        path for paths in conversion_paths_nested for path in paths
+    ]
+    conversion_df = create_conversion_df(conversion_paths)
+
+    return conversion_df
+
+
 def convert_rt(
     dcm_img,
     dcm_rt_path,
@@ -361,7 +396,7 @@ def find_matching_img(
         dcm_img_path = next(dicom_dir.glob("*.dcm"))
         dcm_img = pydicom.dcmread(dcm_img_path)
         dcm_seg = pydicom.dcmread(rtstruct_path)
-        if not dcm_img.Modality == "MR":
+        if not dcm_img.Modality == "MR" and not dcm_img.Modality == "CT":
             pass
         assert dcm_seg.Modality == "RTSTRUCT"
         if is_dicom_a_match(dcm_img, dcm_seg):
