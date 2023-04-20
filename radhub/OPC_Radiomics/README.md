@@ -1,4 +1,4 @@
-## OPC_Radiomics dataset
+## OPC-Radiomics dataset
 
 ## Requirements
 
@@ -30,7 +30,7 @@ Currently we use only GTV masks, as in the original publication. There are, howe
 `Kwan JYY, Su J, Huang SH, Ghoraie LS, Xu W, Chan B, Yip KW, Giuliani M, Bayley A, Kim J, Hope AJ, Ringash J, Cho J, McNiven A, Hansen A, Goldstein D, de Almeida JR, Aerts HJ, Waldron JN, Haibe-Kains B, O'Sullivan B, Bratman SV, Liu FF. (2019). Data from Radiomic Biomarkers to Refine Risk Models for Distant Metastasis in Oropharyngeal Carcinoma. The Cancer Imaging Archive. DOI:  10.7937/tcia.2019.8dho2gls`
 
 **Publication citation**:
-`Kwan JYY, Su J, Huang SH, Ghoraie LS, Xu W, Chan B, Yip KW, Giuliani M, Bayley A, Kim J, Hope AJ, Ringash J, Cho J, McNiven A, Hansen A, Goldstein D, de Almeida JR, Aerts HJ, Waldron JN, Haibe-Kains B, O'Sullivan B, Bratman SV, Liu FF.  (2018)  Radiomic Biomarkers to Refine Risk Models for Distant Metastasis in HPV-related Oropharyngeal Carcinoma . International Journal of Radiation Oncology*Biology*Physics, 1-10. DOI: 10.1016/j.ijrobp.2018.01.057`
+`Kwan JYY, Su J, Huang SH, Ghoraie LS, Xu W, Chan B, Yip KW, Giuliani M, Bayley A, Kim J, Hope AJ, Ringash J, Cho J, McNiven A, Hansen A, Goldstein D, de Almeida JR, Aerts HJ, Waldron JN, Haibe-Kains B, O'Sullivan B, Bratman SV, Liu FF.  (2018)  Radiomic Biomarkers to Refine Risk Models for Distant Metastasis in HPV-related Oropharyngeal Carcinoma . International Journal of Radiation Oncology*Biology*Physics, 1-10. DOI: https://doi.org/10.1016/j.ijrobp.2018.01.057`
 
 **TCIA citation**:
 `Clark, K., Vendt, B., Smith, K., Freymann, J., Kirby, J., Koppel, P., Moore, S., Phillips, S., Maffitt, D., Pringle, M., Tarbox, L., & Prior, F. (2013). The Cancer Imaging Archive (TCIA): Maintaining and Operating a Public Information Repository. Journal of Digital Imaging, 26(6), 1045–1057. https://doi.org/10.1007/s10278-013-9622-7`

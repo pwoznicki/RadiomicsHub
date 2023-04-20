@@ -1,4 +1,4 @@
-## LIDC-IDRI dataset
+## NSCLC-Radiomics dataset
 
 ## Requirements
 

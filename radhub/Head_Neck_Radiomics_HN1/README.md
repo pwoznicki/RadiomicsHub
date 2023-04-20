@@ -1,4 +1,4 @@
-## HEAD-Neck-Radiomics-HN1 dataset
+## Head-Neck-Radiomics-HN1 dataset
 
 ## Requirements
 
@@ -9,7 +9,7 @@
 1. Download DICOM images and segmentations from https://wiki.cancerimagingarchive.net/display/Public/Head-Neck-Radiomics-HN1 (takes a while...) \\
    Save them in a folder `<your_base_dir>/raw/dicom`.
 
-2. In the same link, download *Clinical Data*. Unpack the ZIP and save the CSV as`<your_base_dir>/raw/tables/clinical_data.csv`.
+2. In the same link, download *Clinical Data*. Unpack the ZIP and save the CSV as `<your_base_dir>/raw/tables/clinical_data.csv`.
 
 4. Edit the `base_path` in [config.py](config.py)
 

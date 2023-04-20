@@ -1,4 +1,4 @@
-### LIDC-IDRI dataset
+### RIDER-LungCT dataset
 
 ## Requirements
 

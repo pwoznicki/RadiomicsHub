@@ -49,6 +49,8 @@ c. Run the preprocessing and feature extraction:
 
 ## Citation
 
-Starmans, M. P. A. et al. (2021). The WORC\* database: MRI and CT scans, segmentations, and clinical labels for 932 patients from six radiomics studies. Submitted, preprint available from https://doi.org/10.1101/2021.08.19.21262238
+**Data citation**:
+`Starmans, M. P. A. et al. (2021). The WORC\* database: MRI and CT scans, segmentations, and clinical labels for 932 patients from six radiomics studies. Submitted, preprint available from https://doi.org/10.1101/2021.08.19.21262238`
 
-The experiments are described in the following paper: Starmans, M. P. A. et al. (2021). Reproducible radiomics through automated machine learning validated on twelve clinical applications. Submitted, preprint available from https://arxiv.org/abs/2108.08618.
+**Publication citation**:
+`The experiments are described in the following paper: Starmans, M. P. A. et al. (2021). Reproducible radiomics through automated machine learning validated on twelve clinical applications. Submitted, preprint available from https://arxiv.org/abs/2108.08618, DOI: https://doi.org/10.48550/arXiv.2108.08618.`

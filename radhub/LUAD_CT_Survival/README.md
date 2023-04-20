@@ -1,4 +1,4 @@
-## LIDC-IDRI dataset
+## LUAD-CT-Survival dataset
 
 ## Requirements
 
@@ -31,7 +31,6 @@
 `Goldgof D., Hall L., Hawkins S.H., Schabath M.B., Stringfield O., Garcia A., Balagurunathan Y., Kim J., Eschrich S., Berglund A.E., Gatenby R., Gillies R.J. (2017) Long and Short Survival in Adenocarcinoma Lung CTs. The Cancer Imaging Archive. https://doi.org/10.7937/K9/TCIA.2017.0tv7b9x1`
 
 **Publication citations**:
-
 1. `Paul, R., Hawkins, S., Balagurunathan, Y., Schabath, M., Gillies, R., Hall, L., & Goldgof, D. (2016). Deep Feature Transfer Learning in Combination with Traditional Features Predicts Survival among Patients with Lung Adenocarcinoma. Tomography, 2(4), 388–395. https://doi.org/10.18383/j.tom.2016.00211`
 2. `Hawkins, S. H., Korecki, J. N., Balagurunathan, Y., Yuhua Gu, Kumar, V., Basu, S., Hall, L. O., Goldgof, D. B., Gatenby, R. A., & Gillies, R. J. (2014). Predicting Outcomes of Nonsmall Cell Lung Cancer Using CT Image Features. IEEE Access, 2, 1418–1426. https://doi.org/10.1109/access.2014.2373335`
 

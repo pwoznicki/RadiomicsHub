@@ -1,4 +1,4 @@
-## LIDC-IDRI dataset
+## Prostate-MRI-US-Biopsy dataset
 
 ## Requirements
 
@@ -37,8 +37,10 @@ docker run -p 8888:8888 -p 49053:49053 -v /mnt/hard/radiomics-features/Prostate-
 ## Citation
 
 **Data citation**:
+`Natarajan, S., Priester, A., Margolis, D., Huang, J., & Marks, L. (2020). Prostate MRI and Ultrasound With Pathology and Coordinates of Tracked Biopsy (Prostate-MRI-US-Biopsy) [Data set]. The Cancer Imaging Archive. DOI: https://doi.org/10.7937/TCIA.2020.A61IOC1A`
 
 **Publication citation**:
+`Sonn GA, Natarajan S, Margolis DJ, MacAiran M, Lieu P, Huang J, Dorey FJ, Marks LS. Targeted biopsy in the detection of prostate  cancer using an office based magnetic resonance ultrasound fusion device.  Journal of Urology 189, no. 1 (2013): 86-91. DOI: https://doi.org/10.1016/j.juro.2012.08.095`
 
 **TCIA citation**:
 `Clark, K., Vendt, B., Smith, K., Freymann, J., Kirby, J., Koppel, P., Moore, S., Phillips, S., Maffitt, D., Pringle, M., Tarbox, L., & Prior, F. (2013). The Cancer Imaging Archive (TCIA): Maintaining and Operating a Public Information Repository. Journal of Digital Imaging, 26(6), 1045–1057. https://doi.org/10.1007/s10278-013-9622-7`

@@ -1,4 +1,4 @@
-## LIDC-IDRI dataset
+## LNDb dataset
 
 ## Steps
 
@@ -33,5 +33,6 @@ Only nodules >3mm were segmented, smaller nodules and non-nodules were only anno
 
 ## Citation
 
-`Pedrosa, João, et al. "LNDb: a lung nodule database on computed tomography." arXiv preprint arXiv:1911.08434 (2019).`
-`Pedrosa, João, et al. "LNDb challenge on automatic lung cancer patient management." Medical image analysis 70 (2021): 102027.`
+**Publication citation**:
+`Pedrosa, João, et al. "LNDb: a lung nodule database on computed tomography." arXiv preprint arXiv:1911.08434 (2019). DOI: https://doi.org/10.48550/arXiv.1911.08434`
+`Pedrosa, João, et al. "LNDb challenge on automatic lung cancer patient management." Medical image analysis 70 (2021): 102027. DOI: https://doi.org/10.1016/j.media.2021.102027`

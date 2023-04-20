@@ -1,4 +1,4 @@
-## NSCLC-Radiogenomics
+## NSCLC-Radiogenomics dataset
 
 ## Requirements
 

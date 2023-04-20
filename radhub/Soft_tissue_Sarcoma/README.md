@@ -1,4 +1,4 @@
-## LIDC-IDRI dataset
+## Soft-tissue-Sarcoma dataset
 
 ## Requirements
 

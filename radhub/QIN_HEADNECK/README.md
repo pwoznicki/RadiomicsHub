@@ -42,7 +42,7 @@ AnatomicRegion = (T-53131, SRT, "base of tongue")
 `Beichel R R, Ulrich E J, Bauer C, Wahle A, Brown B, Chang T, Plichta K A, Smith B J, Sunderland J J, Braun T, Fedorov A, Clunie D, Onken M, Magnotta VA, Menda Y, Riesmeier J, Pieper S, Kikinis R, Graham M M, Casavant T L, Sonka M, Buatti J M. (2015). Data From QIN-HEADNECK. The Cancer Imaging Archive. DOI:  10.7937/K9/TCIA.2015.K0F5CGLI`
 
 **Publication citation**:
-`Fedorov A, Clunie D, Ulrich E, Bauer C, Wahle A, Brown B, Onken M, Riesmeier J, Pieper S, Kikinis R, Buatti J, Beichel RR. (2016) DICOM for quantitative imaging biomarker development: a standards based approach to sharing clinical data and structured PET/CT analysis results in head and neck cancer research. PeerJ 4:e2057  DOI: 10.7717/peerj.2057`
+`Fedorov A, Clunie D, Ulrich E, Bauer C, Wahle A, Brown B, Onken M, Riesmeier J, Pieper S, Kikinis R, Buatti J, Beichel RR. (2016) DICOM for quantitative imaging biomarker development: a standards based approach to sharing clinical data and structured PET/CT analysis results in head and neck cancer research. PeerJ 4:e2057  DOI: https://doi.org/10.7717/peerj.2057`
 
 **TCIA citation**:
 `Clark, K., Vendt, B., Smith, K., Freymann, J., Kirby, J., Koppel, P., Moore, S., Phillips, S., Maffitt, D., Pringle, M., Tarbox, L., & Prior, F. (2013). The Cancer Imaging Archive (TCIA): Maintaining and Operating a Public Information Repository. Journal of Digital Imaging, 26(6), 1045–1057. https://doi.org/10.1007/s10278-013-9622-7`
