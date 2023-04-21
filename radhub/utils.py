@@ -186,10 +186,6 @@ def convert_dataset_sitk(
         args, convert_sitk, n_jobs=n_jobs, argument_type="args"
     )
 
-    # breakpoint()
-    # conversion_paths = [
-    #     path for paths in conversion_paths_nested for path in paths
-    # ]
     conversion_df = create_conversion_df(conversion_paths)
 
     return conversion_df
@@ -243,11 +239,15 @@ def extract_features(
 def convert_sitk(in_path, out_path):
     if not Path(in_path).exists():
         raise FileNotFoundError(f"File {str(in_path)} does not exist")
-    data = io.read_image_sitk(Path(in_path))
-    Path(out_path).parent.mkdir(exist_ok=True, parents=True)
-    if Path(out_path).exists():
-        log.warning(f"File {str(out_path)} already exists, overwriting")
-    sitk.WriteImage(data, str(out_path))
+    try:
+        # data = io.read_image_sitk(Path(in_path))
+        Path(out_path).parent.mkdir(exist_ok=True, parents=True)
+        # if Path(out_path).exists():
+        #     log.warning(f"File {str(out_path)} already exists, overwriting")
+        # sitk.WriteImage(data, str(out_path))
+    except RuntimeError:
+        log.error(f"Conversion to nifti with SimpleITK failed for {in_path}")
+        return None
 
     return in_path, out_path
 
@@ -268,18 +268,31 @@ def convert_seg(
     dcm = pydicom.dcmread(raw_seg_path)
 
     reader = pydicom_seg.SegmentReader()
-    result = reader.read(dcm)
+    try:
+        dcm_seg = reader.read(dcm)
+    except ValueError as e:
+        log.error(f"Error reading segmentation ({raw_seg_path})")
+        return []        
     paths = []
-    for segment_ID in result.available_segments:
-        segment_meta = result.segment_infos[segment_ID]
+    for segment_ID in dcm_seg.available_segments:
+        try:
+            segment_meta = dcm_seg.segment_infos[segment_ID]
+        except Exception as e:
+            log.error("Error reading segment {segment_ID} in {raw_seg_path}")
+            continue
         roi = segment_meta.SegmentLabel.replace(" ", "_")
-        image = result.segment_image(segment_ID)
         output_path = output_dir / f"seg_{roi}.nii.gz"
         if output_path.exists():
             log.warn("Output path already exists: %s", output_path)
         output_path.parent.mkdir(exist_ok=True, parents=True)
+        try:
+            image = dcm_seg.segment_image(segment_ID)
+        except ValueError:
+            log.error(
+                "Segment %s not found in %s", segment_ID, raw_seg_path
+            )
+            continue
         sitk.WriteImage(image, str(output_path))
-
         paths.append((raw_seg_path, output_path))
     return paths
 
@@ -442,3 +455,8 @@ def is_rtstruct(dcm_path):
 def get_modality(dcm_path):
     dcm_img = pydicom.dcmread(dcm_path)
     return dcm_img.Modality
+
+def get_dcm_tag(tag, dcm_dir):
+    dcm_path = next(dcm_dir.glob("*.dcm"))
+    dcm_img = pydicom.dcmread(dcm_path)
+    return dcm_img[tag].value
